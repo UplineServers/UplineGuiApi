@@ -16,10 +16,10 @@ data class GUIEntity(
     val size: Int = 27,
     val items: MutableMap<Int, ItemStack> = mutableMapOf(),
     var inventory: Inventory? = null,
-    var players: List<Player> = emptyList(),
-    
+    var players: MutableList<Player> = mutableListOf(),
+
     // Simple event callbacks
-    var onOpen: ((Player, GUIEntity) -> Unit)? = null,
-    var onClose: ((Player, GUIEntity) -> Unit)? = null,
-    var onClick: ((Player, GUIEntity, Int, ItemStack?) -> Unit)? = null
+    var onOpen: ((Player) -> Unit)? = null,
+    var onClose: ((Player) -> Unit)? = null,
+    var onClick: ((Player, Int?) -> Unit)? = null
 )

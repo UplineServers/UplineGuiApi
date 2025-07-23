@@ -1,6 +1,6 @@
 package com.uplineservers.customGUI.listeners
 
-import com.uplineservers.customGUI.services.GUIManager
+import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -11,37 +11,40 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 /**
  * Handles inventory events for custom GUIs
  */
-class InventoryListener(private val guiManager: GUIManager) : Listener {
-    
+class InventoryListener : Listener {
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onInventoryOpen(event: org.bukkit.event.inventory.InventoryOpenEvent) {
+        val player = event.player as Player
+
+        // Check if this is a custom GUI using the global registry
+        val gui = GUIStorage.getByPlayer(player)
+        if (gui != null && gui.onOpen != null) {
+            gui.onOpen!!.invoke(player)
+            gui.players += player
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked
-        val inventory = event.inventory
         val slot = event.slot
         
-        // Check if this is a custom GUI
-        val customGUIInventory = guiManager.getByInventory(inventory)
-        if (customGUIInventory != null && player is Player) {
-            // Cancel the event by default to prevent item movement
-            // You can modify this behavior in your onClick listener if needed
-            event.isCancelled = true
-            
-            // Only handle clicks within the custom inventory bounds
-            if (slot >= 0 && slot < inventory.size) {
-                guiManager.handleClick(player, inventory, slot)
-            }
+        // Check if this is a custom GUI using the global registry
+        val gui = GUIStorage.getByPlayer(player as Player)
+        if (gui != null && gui.onClick != null) {
+            gui.onClick!!.invoke(player, slot)
         }
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryClose(event: InventoryCloseEvent) {
         val player = event.player
-        val inventory = event.inventory
-        
-        // Check if this is a custom GUI
-        val customGUIInventory = guiManager.getByInventory(inventory)
-        if (customGUIInventory != null && player is Player) {
-            guiManager.onClose(player, inventory)
+
+        val gui = GUIStorage.getByPlayer(player as Player)
+        if (gui != null && gui.onClose != null) {
+            gui.onClose!!.invoke(player)
+            gui.players -= player
         }
     }
 }

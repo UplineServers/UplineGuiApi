@@ -1,6 +1,7 @@
 package com.uplineservers.customGUI.commands
 
 import com.uplineservers.customGUI.entities.GUIEntity
+import com.uplineservers.customGUI.services.GUIPlayer
 import com.uplineservers.customGUI.services.ServiceManager
 import org.bukkit.Material
 import org.bukkit.command.Command
@@ -32,30 +33,28 @@ class MainMenuCommand(private val serviceManager: ServiceManager) : CommandExecu
         itemMeta?.setDisplayName("§bExample Item")
         itemMeta?.lore = listOf("§7Click me!")
         itemStack.itemMeta = itemMeta
-        
-        // Use the service to set items
-        serviceManager.guiBuild.setItem(gui, 13, itemStack)
+
+        gui.inventory!!.setItem(0, itemStack) // Set item in slot 0
         
         // Set up click handler
-        gui.onClick = { player, guiEntity, slot, item ->
+        gui.onClick = { player, slot ->
             if (slot == 13) {
                 player.sendMessage("§aYou clicked the example item!")
             }
         }
         
         // Set up open handler
-        gui.onOpen = { player, guiEntity ->
+        gui.onOpen = { player ->
             player.sendMessage("§7Welcome to the main menu!")
         }
         
         // Set up close handler
-        gui.onClose = { player, guiEntity ->
+        gui.onClose = { player ->
             player.sendMessage("§7Thanks for using the main menu!")
         }
         
         // Create and open the GUI using the GUI manager
-        serviceManager.guiManager.createGUI(gui)
-        serviceManager.guiManager.openGUI(sender, gui)
+        GUIPlayer().openGUI(gui, sender)
         
         return true
     }

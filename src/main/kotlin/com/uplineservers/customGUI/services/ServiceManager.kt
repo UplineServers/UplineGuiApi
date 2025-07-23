@@ -8,37 +8,32 @@ import com.uplineservers.customGUI.CustomGUI
  */
 class ServiceManager(private val plugin: CustomGUI) {
     
-    // Service instances
+    // Service instances (GUIManager removed - replaced by GUIRegistry)
     private lateinit var _guiBuild: GUIBuild
     private lateinit var _guiGet: GUIGet
     private lateinit var _guiPlayer: GUIPlayer
-    private lateinit var _guiManager: GUIManager
     
     // Public accessors (like @Autowired beans)
     val guiBuild: GUIBuild get() = _guiBuild
     val guiGet: GUIGet get() = _guiGet
     val guiPlayer: GUIPlayer get() = _guiPlayer
-    val guiManager: GUIManager get() = _guiManager
-    
+
     /**
      * Initialize all services with dependency injection
      */
     fun initialize() {
         plugin.logger.info("Initializing services...")
         
-        // Initialize services in correct dependency order
+        // Initialize individual services (no more GUIManager dependency injection)
         _guiBuild = GUIBuild()
         _guiGet = GUIGet()
         _guiPlayer = GUIPlayer()
         
-        // GUIManager depends on other services
-        _guiManager = GUIManager(
-            guiBuild = _guiBuild,
-            guiGet = _guiGet,
-            guiPlayer = _guiPlayer
-        )
+        // Note: GUIManager is removed - GUIRegistry handles coordination
+        // Each service works independently with GUIRegistry as central storage
         
         plugin.logger.info("All services initialized successfully!")
+        plugin.logger.info("Using GUIRegistry for centralized GUI management")
     }
     
     /**

@@ -17,8 +17,8 @@ class GUIHelpCommand(private val plugin: CustomGUI) : CommandExecutor {
         sender.sendMessage("§e/dynamicgui §7- Opens a dynamic inventory that updates")
         sender.sendMessage("§e/guihelp §7- Shows this help message")
         sender.sendMessage("")
-        sender.sendMessage("§7Plugin version: ${plugin.description.version}")
-        sender.sendMessage("§7Author: ${plugin.description.authors.joinToString(", ")}")
+        sender.sendMessage("§7Plugin version: ${plugin.pluginMeta.version}")
+        sender.sendMessage("§7Author: ${plugin.pluginMeta.authors.joinToString(", ")}")
         
         return true
     }

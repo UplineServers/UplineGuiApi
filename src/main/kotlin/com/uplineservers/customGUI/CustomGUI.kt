@@ -4,6 +4,7 @@ import com.uplineservers.customGUI.commands.GUIHelpCommand
 import com.uplineservers.customGUI.commands.MainMenuCommand
 import com.uplineservers.customGUI.listeners.InventoryListener
 import com.uplineservers.customGUI.services.ServiceManager
+import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.plugin.java.JavaPlugin
 
 class CustomGUI : JavaPlugin() {
@@ -34,7 +35,7 @@ class CustomGUI : JavaPlugin() {
         
         // Clean up services
         if (::serviceManager.isInitialized) {
-            serviceManager.guiManager.clearAll()
+            GUIStorage.cleanup()
             serviceManager.shutdown()
         }
         
@@ -48,7 +49,7 @@ class CustomGUI : JavaPlugin() {
         logger.info("Registering event listeners...")
         
         val pluginManager = server.pluginManager
-        pluginManager.registerEvents(InventoryListener(serviceManager.guiManager), this)
+        pluginManager.registerEvents(InventoryListener(), this)
         
         logger.info("Event listeners registered successfully!")
     }

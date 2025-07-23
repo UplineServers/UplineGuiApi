@@ -3,7 +3,6 @@ package com.uplineservers.customGUI
 import com.uplineservers.customGUI.entities.GUIEntity
 import com.uplineservers.customGUI.services.GUIBuild
 import com.uplineservers.customGUI.services.GUIGet
-import com.uplineservers.customGUI.services.GUIManager
 import com.uplineservers.customGUI.services.GUIPlayer
 import org.bukkit.Material
 import org.bukkit.entity.Player
