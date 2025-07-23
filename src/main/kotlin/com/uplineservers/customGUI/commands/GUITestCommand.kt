@@ -1,8 +1,7 @@
 package com.uplineservers.customGUI.commands
 
 import com.uplineservers.customGUI.entities.GUIEntity
-import com.uplineservers.customGUI.services.GUIPlayer
-import com.uplineservers.customGUI.services.ServiceManager
+import com.uplineservers.customGUI.services.GUIBuild
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -13,20 +12,20 @@ import org.bukkit.inventory.ItemStack
 /**
  * Example command showing how to use services with dependency injection
  */
-class MainMenuCommand(private val serviceManager: ServiceManager) : CommandExecutor {
+class GUITestCommand() : CommandExecutor {
     
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("§cThis command can only be used by players!")
             return true
         }
-        
+
         // Create a new GUI using the service manager
         val gui = GUIEntity(
             title = "§6§lMain Menu",
             size = 27
         )
-        
+
         // Set up GUI items using the GUI build service
         val itemStack = ItemStack(Material.DIAMOND_SWORD)
         val itemMeta = itemStack.itemMeta
@@ -34,7 +33,11 @@ class MainMenuCommand(private val serviceManager: ServiceManager) : CommandExecu
         itemMeta?.lore = listOf("§7Click me!")
         itemStack.itemMeta = itemMeta
 
-        gui.inventory!!.setItem(0, itemStack) // Set item in slot 0
+        // Add item to the GUI items map instead of directly to inventory
+        gui.items[13] = itemStack // Set item in slot 13 (center of 3x9 inventory)
+        
+        // Build the inventory using GUIBuild service
+        GUIBuild().build(gui)
         
         // Set up click handler
         gui.onClick = { player, slot ->
@@ -54,7 +57,7 @@ class MainMenuCommand(private val serviceManager: ServiceManager) : CommandExecu
         }
         
         // Create and open the GUI using the GUI manager
-        GUIPlayer().openGUI(gui, sender)
+        sender.openInventory(gui.inventory!!)
         
         return true
     }

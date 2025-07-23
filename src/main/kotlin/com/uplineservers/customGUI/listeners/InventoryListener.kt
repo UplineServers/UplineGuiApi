@@ -7,21 +7,24 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * Handles inventory events for custom GUIs
  */
-class InventoryListener : Listener {
+class InventoryListener(private val plugin: JavaPlugin) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryOpen(event: org.bukkit.event.inventory.InventoryOpenEvent) {
         val player = event.player as Player
 
         // Check if this is a custom GUI using the global registry
-        val gui = GUIStorage.getByPlayer(player)
+        val gui = GUIStorage.getByInventory(event.inventory)
+        plugin.logger.info("Player ${player.name} opened a GUI: ${gui?.title ?: "Unknown"}")
         if (gui != null && gui.onOpen != null) {
+            // Call the onOpen callback if it exists
+            GUIStorage.addPlayer(gui, player);
             gui.onOpen!!.invoke(player)
-            gui.players += player
         }
     }
 
@@ -44,7 +47,13 @@ class InventoryListener : Listener {
         val gui = GUIStorage.getByPlayer(player as Player)
         if (gui != null && gui.onClose != null) {
             gui.onClose!!.invoke(player)
-            gui.players -= player
+            gui.players.remove(player) // Remove player from GUI's player list
+            if(gui.players.isEmpty()) {
+                plugin.logger.info("All players have closed the GUI: ${gui.title}. Cleaning up.")
+                GUIStorage.remove(gui);
+            } else {
+                plugin.logger.info("Player ${player.name} closed the GUI: ${gui.title}. Remaining players: ${gui.players.size}")
+            }
         }
     }
 }

@@ -12,10 +12,8 @@ class GUIHelpCommand(private val plugin: CustomGUI) : CommandExecutor {
     
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         sender.sendMessage("§6§l=== CustomGUI Help ===")
-        sender.sendMessage("§e/mainmenu §7- Opens the main menu GUI")
-        sender.sendMessage("§e/confirmdialog [title] §7- Opens a confirmation dialog")
-        sender.sendMessage("§e/dynamicgui §7- Opens a dynamic inventory that updates")
         sender.sendMessage("§e/guihelp §7- Shows this help message")
+        sender.sendMessage("§e/guitest §7- Opens the test GUI")
         sender.sendMessage("")
         sender.sendMessage("§7Plugin version: ${plugin.pluginMeta.version}")
         sender.sendMessage("§7Author: ${plugin.pluginMeta.authors.joinToString(", ")}")

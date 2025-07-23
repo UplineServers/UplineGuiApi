@@ -10,79 +10,13 @@ depend: []
 softdepend: []
 
 commands:
-  mainmenu:
-    description: Opens the main menu GUI
-    usage: /mainmenu
+  guitest:
+    description: Opens the test GUI
+    usage: /<command>
     permission: customgui.use
-    aliases: [menu, mm]
-  
-  confirmdialog:
-    description: Opens a confirmation dialog GUI
-    usage: /confirmdialog [title]
-    permission: customgui.use
-    aliases: [confirm, cd]
-  
-  dynamicgui:
-    description: Opens a dynamic inventory GUI
-    usage: /dynamicgui
-    permission: customgui.use
-    aliases: [dynamic, dg]
-  
+    permission-message: You do not have permission to use this command
   guihelp:
-    description: Shows help for CustomGUI commands
-    usage: /guihelp
-    permission: customgui.use
-    aliases: [gh, customguihelp]
-
-permissions:
-  customgui.*:
-    description: All CustomGUI permissions
-    children:
-      customgui.admin: true
-      customgui.use: true
-      customgui.api.use: true
-      customgui.create: true
-      customgui.delete: true
-      customgui.manage: true
-  
-  customgui.use:
-    description: Basic permission to use CustomGUI commands
-    default: true
-  
-  customgui.admin:
-    description: Administrative access to CustomGUI
-    default: op
-    children:
-      customgui.use: true
-      customgui.api.use: true
-      customgui.create: true
-      customgui.delete: true
-      customgui.manage: true
-      customgui.security.manage: true
-  
-  customgui.api.use:
-    description: Allows other plugins to use the CustomGUI API
-    default: true
-  
-  customgui.create:
-    description: Allows creating custom GUIs
-    default: op
-  
-  customgui.delete:
-    description: Allows deleting custom GUIs
-    default: op
-  
-  customgui.manage:
-    description: Allows managing GUI settings and permissions
-    default: op
-  
-  customgui.security.manage:
-    description: Allows managing security settings
-    default: op
-
-commands:
-  customgui:
-    description: Main CustomGUI command
-    usage: /customgui <subcommand>
-    permission: customgui.admin
-    aliases: [cgui]
+    description: Displays help for the custom GUI command
+    usage: /<command>
+    permission: customgui.help
+    permission-message: You do not have permission to use this command

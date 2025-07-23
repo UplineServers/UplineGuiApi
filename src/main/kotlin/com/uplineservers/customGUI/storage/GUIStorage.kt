@@ -19,15 +19,19 @@ class GUIStorage {
             return guis.values.find { it.inventory == inventory }
         }
 
-        fun cleanup() {
-            // Remove all players from GUIs
-            guis.values.forEach { gui ->
-                gui.players.clear()
+        fun add(gui: GUIEntity) {
+            guis[gui.id] = gui
+        }
+
+        fun addPlayer(gui: GUIEntity, player: Player) {
+            if (!gui.players.contains(player)) {
+                gui.players.add(player)
+                playersGUI[player] = gui.id // Store player-GUI mapping
             }
-            // Clear all stored GUIs
-            guis.clear()
-            // Clear player GUI mappings
-            playersGUI.clear()
+        }
+
+        fun remove(gui: GUIEntity) {
+            guis.remove(gui.id)
         }
     }
 }

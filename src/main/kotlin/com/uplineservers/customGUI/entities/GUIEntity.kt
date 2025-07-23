@@ -12,7 +12,7 @@ import java.util.*
 data class GUIEntity(
     val id: String = UUID.randomUUID().toString(),
     var title: String = "Custom GUI",
-    val type: InventoryType? = null,
+    var type: InventoryType? = null,
     val size: Int = 27,
     val items: MutableMap<Int, ItemStack> = mutableMapOf(),
     var inventory: Inventory? = null,

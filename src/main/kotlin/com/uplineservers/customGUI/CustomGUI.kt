@@ -1,22 +1,16 @@
 package com.uplineservers.customGUI
 
 import com.uplineservers.customGUI.commands.GUIHelpCommand
-import com.uplineservers.customGUI.commands.MainMenuCommand
+import com.uplineservers.customGUI.commands.GUITestCommand
 import com.uplineservers.customGUI.listeners.InventoryListener
-import com.uplineservers.customGUI.services.ServiceManager
-import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.plugin.java.JavaPlugin
 
 class CustomGUI : JavaPlugin() {
     
     // Service manager for dependency injection
-    private lateinit var serviceManager: ServiceManager
 
     override fun onEnable() {
         logger.info("Enabling CustomGUI plugin...")
-        
-        // Initialize service manager and all services
-        serviceManager = ServiceManager.initialize(this)
         
         // Register event listeners
         registerListeners()
@@ -32,14 +26,6 @@ class CustomGUI : JavaPlugin() {
 
     override fun onDisable() {
         logger.info("Disabling CustomGUI plugin...")
-        
-        // Clean up services
-        if (::serviceManager.isInitialized) {
-            GUIStorage.cleanup()
-            serviceManager.shutdown()
-        }
-        
-        logger.info("CustomGUI plugin has been disabled!")
     }
     
     /**
@@ -49,19 +35,19 @@ class CustomGUI : JavaPlugin() {
         logger.info("Registering event listeners...")
         
         val pluginManager = server.pluginManager
-        pluginManager.registerEvents(InventoryListener(), this)
+        pluginManager.registerEvents(InventoryListener(this), this)
         
         logger.info("Event listeners registered successfully!")
     }
-    
+
     /**
      * Register all commands
      */
     private fun registerCommands() {
         logger.info("Registering commands...")
         
-        getCommand("guihelp")?.setExecutor(GUIHelpCommand(this))
-        getCommand("mainmenu")?.setExecutor(MainMenuCommand(serviceManager))
+        this.getCommand("guihelp")?.setExecutor(GUIHelpCommand(this))
+        this.getCommand("guitest")?.setExecutor(GUITestCommand())
         
         // Add other commands here as you create them
         // getCommand("confirmdialog")?.setExecutor(ConfirmDialogCommand(serviceManager))
@@ -73,8 +59,7 @@ class CustomGUI : JavaPlugin() {
     /**
      * Get the service manager for dependency injection
      */
-    fun getServiceManager(): ServiceManager = serviceManager
-    
+
     companion object {
         private lateinit var _instance: CustomGUI
 
