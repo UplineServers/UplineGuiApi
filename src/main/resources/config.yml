@@ -1,0 +1,18 @@
+# CustomGUI Plugin Configuration
+# This plugin provides an API for creating custom GUIs with advanced features
+
+# Default GUI Settings
+defaults:
+  # Default restrictions
+  restrictions:
+    allow-item-insertion: true
+    allow-item-extraction: true
+    allow-item-movement: true
+    log-all-actions: true
+    prevent-shift-click: false
+    prevent-number-keys: false
+    prevent-drop-items: false
+    allow-left-click: true
+    allow-right-click: true
+    allow-middle-click: false
+    auto-close-after: -1      # -1 = disabled
