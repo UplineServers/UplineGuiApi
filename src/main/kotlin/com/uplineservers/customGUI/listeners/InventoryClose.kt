@@ -18,16 +18,22 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
         if(gui == null) return
         if(gui.isUpdating) return
 
-        if (gui.onClose != null) {
-
-            gui.onClose!!.invoke(event)
-            if (gui.players.isEmpty()) {
-                plugin.logger.info("All players have closed the GUI: ${gui.title}. Cleaning up.")
-                GUIStorage.remove(gui);
-            } else {
-                plugin.logger.info("Player ${player.name} closed the GUI: ${gui.title}. Remaining players: ${gui.players.size}")
-            }
-        }
+        // Remove the player from the GUI first
         GUIStorage.removePlayer(player)
+
+        if (gui.onClose != null) {
+            gui.onClose!!.invoke(event)
+        }
+
+        // If no players are left, schedule delayed removal instead of immediate removal
+        if (gui.players.isEmpty()) {
+            plugin.logger.info("All players have closed the GUI: ${gui.title}. Scheduling removal in ${gui.removalDelay} seconds.")
+            if(gui.removalDelay > 0)
+                GUIStorage.scheduleRemoval(gui, plugin)
+            else
+                GUIStorage.remove(gui)
+        } else {
+            plugin.logger.info("Player ${player.name} closed the GUI: ${gui.title}. Remaining players: ${gui.players.size}")
+        }
     }
 }

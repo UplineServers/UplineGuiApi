@@ -17,6 +17,9 @@ class InventoryOpen(private val plugin: JavaPlugin) : Listener {
         if (gui == null) return
         if (gui.isUpdating) return
 
+        // Cancel any pending removal task since a player is opening the GUI
+        GUIStorage.cancelRemoval(gui)
+
         plugin.logger.info("Player ${player.name} opened a GUI: ${gui?.title ?: "Unknown"}")
         if (gui.onOpen != null) {
             // Call the onOpen callback if it exists

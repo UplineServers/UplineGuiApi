@@ -1,8 +1,10 @@
 package com.uplineservers.customGUI.storage
 
 import com.uplineservers.customGUI.entities.GUIEntity
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import org.bukkit.plugin.java.JavaPlugin
 import java.util.concurrent.ConcurrentHashMap
 
 class GUIStorage {
@@ -38,9 +40,24 @@ class GUIStorage {
             val guiId = playersGUI.remove(player) ?: return
             val gui = guis[guiId] ?: return
             gui.players.remove(player)
-            if (gui.players.isEmpty()) {
-                guis.remove(guiId) // Remove GUI if no players are left
-            }
+        }
+
+        fun scheduleRemoval(gui: GUIEntity, plugin: JavaPlugin) {
+            // Cancel any existing removal task
+            gui.removalTask?.cancel()
+            
+            // Schedule a new removal task
+            gui.removalTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+                if (gui.players.isEmpty()) {
+                    plugin.logger.info("Removing GUI after timeout: ${gui.title}")
+                    guis.remove(gui.id)
+                }
+            }, gui.removalDelay * 20L) // Convert seconds to ticks (20 ticks = 1 second)
+        }
+
+        fun cancelRemoval(gui: GUIEntity) {
+            gui.removalTask?.cancel()
+            gui.removalTask = null
         }
 
         fun remove(gui: GUIEntity) {

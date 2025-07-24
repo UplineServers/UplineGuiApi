@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
+import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
 /**
@@ -27,6 +28,10 @@ class GUIEntity(
     var inventory: Inventory? = null,
 
     var players: MutableList<Player> = mutableListOf(),
+
+    // Timeout-related fields for delayed GUI removal
+    var removalTask: BukkitTask? = null,
+    var removalDelay: Long = 0L,
 
     // Simple event callbacks
     var onOpen: ((InventoryOpenEvent) -> Unit)? = null,

@@ -3,13 +3,12 @@ package com.uplineservers.customGUI.commands
 import com.uplineservers.customGUI.entities.GUIEntity
 import com.uplineservers.customGUI.entities.GUIItem
 import com.uplineservers.customGUI.services.GUIBuild
+import com.uplineservers.customGUI.services.GUIOpen
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Item
 import org.bukkit.entity.Player
-import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -23,10 +22,16 @@ class TestCommand() : CommandExecutor {
             return true
         }
 
+        // Check if gui already exists
+        if(GUIOpen.openIfExists(sender, "test_menu"))
+            return true
+
         // Create a new GUI using the service manager
         val gui = GUIEntity(
+            id = "test_menu",
             title = "§6§lMain Menu",
-            size = 27
+            size = 27,
+            removalDelay = 5
         )
 
         // Set up GUI items using the GUI build service
