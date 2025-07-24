@@ -30,6 +30,15 @@ class GUIStorage {
             }
         }
 
+        fun removePlayer(player: Player) {
+            val guiId = playersGUI.remove(player) ?: return
+            val gui = guis[guiId] ?: return
+            gui.players.remove(player)
+            if (gui.players.isEmpty()) {
+                guis.remove(guiId) // Remove GUI if no players are left
+            }
+        }
+
         fun remove(gui: GUIEntity) {
             guis.remove(gui.id)
         }

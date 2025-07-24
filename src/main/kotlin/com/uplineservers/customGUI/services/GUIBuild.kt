@@ -24,7 +24,7 @@ class GUIBuild {
         }
 
         gui.items.forEach { (slot, item) ->
-            inventory.setItem(slot, item)
+            inventory.setItem(slot, item.item)
         }
 
         gui.inventory = inventory

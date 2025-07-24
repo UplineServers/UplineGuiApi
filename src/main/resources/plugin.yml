@@ -20,3 +20,8 @@ commands:
     usage: /<command>
     permission: customgui.help
     permission-message: You do not have permission to use this command
+  guiinfo:
+    description: Displays information about the custom GUI plugin
+    usage: /<command>
+    permission: customgui.info
+    permission-message: You do not have permission to use this command

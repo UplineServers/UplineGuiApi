@@ -4,11 +4,12 @@ import com.uplineservers.customGUI.CustomGUI
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * Command to display help information about all available GUI commands
  */
-class GUIHelpCommand(private val plugin: CustomGUI) : CommandExecutor {
+class HelpCommand(private val plugin: JavaPlugin) : CommandExecutor {
     
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         sender.sendMessage("§6§l=== CustomGUI Help ===")
