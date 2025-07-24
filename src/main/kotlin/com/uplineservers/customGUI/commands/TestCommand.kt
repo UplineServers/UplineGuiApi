@@ -45,7 +45,7 @@ class TestCommand() : CommandExecutor {
         gui.items[13] = GUIItem(
             item = itemStack,
             onClick = { event ->
-                sender.sendMessage("§aYou clicked the example item!")
+                event.whoClicked.sendMessage("§aYou clicked the example item!")
             }
         )
 
@@ -56,8 +56,10 @@ class TestCommand() : CommandExecutor {
 
         gui.items[1] = GUIItem(
             item = ItemStack(Material.DIAMOND_BLOCK),
-            onClick = {
-                sender.give(ItemStack(Material.DIAMOND_BLOCK, 1))
+            onClick = { event ->
+                val player = event.whoClicked
+                if(player is Player)
+                    player.give(ItemStack(Material.DIAMOND_BLOCK, 1))
                 gui.title = "§6§lUpdated Menu"
             }
         )
