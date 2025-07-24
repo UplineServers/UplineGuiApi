@@ -21,14 +21,15 @@ class InventoryListener(private val plugin: JavaPlugin) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryOpen(event: org.bukkit.event.inventory.InventoryOpenEvent) {
         val player = event.player as Player
-
-        // Check if this is a custom GUI using the global registry
         val gui = GUIStorage.getByInventory(event.inventory)
+        if(gui == null) return
+        if(gui.isUpdating) return
+
         plugin.logger.info("Player ${player.name} opened a GUI: ${gui?.title ?: "Unknown"}")
-        if (gui != null && gui.onOpen != null) {
+        if (gui.onOpen != null) {
             // Call the onOpen callback if it exists
             GUIStorage.addPlayer(gui, player);
-            gui.onOpen!!.invoke(player)
+            gui.onOpen!!.invoke(event)
         }
     }
 
@@ -46,7 +47,7 @@ class InventoryListener(private val plugin: JavaPlugin) : Listener {
 
             // Allow per-slot click
             guiItem?.onClick?.invoke(event)
-            gui.onClick?.invoke(player, clickedSlot)
+            gui.onClick?.invoke(event)
 
             if(event.isCancelled) return
 
@@ -59,6 +60,11 @@ class InventoryListener(private val plugin: JavaPlugin) : Listener {
             if (clickedItem != null && clickedItem.type != Material.AIR && !(guiItem?.isMovable ?: gui.isTakeable)) {
                 event.isCancelled = true
             }
+        }
+
+        if(event.clickedInventory?.type == InventoryType.PLAYER){
+            gui.onPlayerInventoryClick?.invoke(event)
+            if(event.isCancelled) return
         }
 
         if (event.isShiftClick && event.clickedInventory?.type == InventoryType.PLAYER) {
@@ -153,10 +159,14 @@ class InventoryListener(private val plugin: JavaPlugin) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryClose(event: InventoryCloseEvent) {
         val player = event.player
-
         val gui = GUIStorage.getByPlayer(player as Player)
-        if (gui != null && gui.onClose != null) {
-            gui.onClose!!.invoke(player)
+
+        if(gui == null) return
+        if(gui.isUpdating) return
+
+        if (gui.onClose != null) {
+
+            gui.onClose!!.invoke(event)
             if (gui.players.isEmpty()) {
                 plugin.logger.info("All players have closed the GUI: ${gui.title}. Cleaning up.")
                 GUIStorage.remove(gui);

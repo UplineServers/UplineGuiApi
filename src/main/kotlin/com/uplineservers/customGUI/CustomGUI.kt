@@ -6,9 +6,13 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class CustomGUI : JavaPlugin() {
     
-    // Service manager for dependency injection
+    companion object {
+        lateinit var instance: CustomGUI
+            private set
+    }
 
     override fun onEnable() {
+        instance = this
         logger.info("Enabling CustomGUI plugin...")
         
         // Register event listeners

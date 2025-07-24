@@ -3,6 +3,7 @@ package com.uplineservers.customGUI.storage
 import com.uplineservers.customGUI.entities.GUIEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import java.util.concurrent.ConcurrentHashMap
 
 class GUIStorage {
@@ -41,6 +42,18 @@ class GUIStorage {
 
         fun remove(gui: GUIEntity) {
             guis.remove(gui.id)
+        }
+
+        fun toNBT(): Map<String, Any> {
+            // Convert the GUI storage to a serializable format
+            return guis.mapValues { (_, gui) ->
+                mapOf(
+                    "id" to gui.id,
+                    "title" to gui.title,
+                    "size" to gui.size,
+                    "items" to gui.inventory?.contents?.map { it?.serialize() ?: emptyMap<Any, Any>() },
+                )
+            }
         }
     }
 }

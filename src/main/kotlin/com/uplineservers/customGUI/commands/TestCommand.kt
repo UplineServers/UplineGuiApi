@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -52,6 +53,7 @@ class TestCommand() : CommandExecutor {
             item = ItemStack(Material.DIAMOND_BLOCK),
             onClick = {
                 sender.give(ItemStack(Material.DIAMOND_BLOCK, 1))
+                gui.title = "§6§lUpdated Menu"
             }
         )
 
@@ -59,26 +61,21 @@ class TestCommand() : CommandExecutor {
             item = ItemStack(Material.DIAMOND_BLOCK),
             isMovable = true,
             onClick = { event ->
-                event.isCancelled = true;
+                event.isCancelled = true
             }
         )
         
         // Build the inventory using GUIBuild service
         GUIBuild().build(gui)
-        
-        // Set up click handler
-        gui.onClick = { player, slot ->
-            player.sendMessage("§aYou clicked the example gui!")
-        }
-        
+
         // Set up open handler
-        gui.onOpen = { player ->
-            player.sendMessage("§7Welcome to the main menu!")
+        gui.onOpen = { event ->
+            event.player.sendMessage("§7Welcome to the main menu!")
         }
         
         // Set up close handler
-        gui.onClose = { player ->
-            player.sendMessage("§7Thanks for using the main menu!")
+        gui.onClose = { event ->
+            event.player.sendMessage("§7Thanks for using the main menu!")
         }
         
         // Create and open the GUI using the GUI manager
