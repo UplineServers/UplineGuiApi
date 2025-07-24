@@ -38,14 +38,12 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
             if(event.isCancelled) return
 
             // Handle item pickup from GUI
-            if (event.cursor.type != Material.AIR && !(guiItem?.isMovable ?: gui.isPutable)) {
+            if (event.cursor.type != Material.AIR && !(guiItem?.isMovable ?: gui.isPutable))
                 event.isCancelled = true
-            }
 
             // Handle item taking from GUI
-            if (clickedItem != null && clickedItem.type != Material.AIR && !(guiItem?.isMovable ?: gui.isTakeable)) {
+            if (clickedItem != null && clickedItem.type != Material.AIR && !(guiItem?.isMovable ?: gui.isTakeable))
                 event.isCancelled = true
-            }
         }
 
         if(event.clickedInventory?.type == InventoryType.PLAYER){
@@ -56,7 +54,7 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
         if (event.isShiftClick && event.clickedInventory?.type == InventoryType.PLAYER) {
             event.isCancelled = true
 
-            if( clickedItem == null || clickedItem.type == Material.AIR)
+            if(clickedItem == null || clickedItem.type == Material.AIR)
                 return
 
             // Try manually placing the item in a valid slot
@@ -88,8 +86,7 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
                     } else {
                         player.inventory.setItem(event.slot, clickedItem)
                     }
-
-                } else if (isEmpty) {
+                } else {
                     val toInsert = clickedItem.clone()
                     val toPlace = toInsert.amount.coerceAtMost(clickedItem.maxStackSize)
 
@@ -105,17 +102,15 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
                 }
 
                 player.inventory.setItem(event.slot, clickedItem)
-
-                break
+                GUISync.syncInventorySlot(gui, slot)
+                return
             }
         }
 
         // Handle number key (hotbar swap)
         if (event.click == ClickType.NUMBER_KEY) {
-            val guiSlot = event.rawSlot
-
-            if (guiSlot < gui.size) {
-                val guiItem = gui.items[guiSlot]
+            if (event.slot < gui.size) {
+                val guiItem = gui.items[event.slot]
                 val isMovable = guiItem?.isMovable ?: gui.isPutable
 
                 if (!isMovable) {
@@ -124,7 +119,7 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
             }
         }
 
-        GUISync().syncInventoryToAllPlayers(gui)
+        GUISync.syncInventorySlot(gui, event.slot)
     }
 
     @EventHandler
