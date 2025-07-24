@@ -3,13 +3,16 @@ package com.uplineservers.customGUI.storage
 import com.uplineservers.customGUI.entities.GUIEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
 import java.util.concurrent.ConcurrentHashMap
 
 class GUIStorage {
     companion object {
         val guis = ConcurrentHashMap<String, GUIEntity>()
         val playersGUI = ConcurrentHashMap<Player, String>()
+
+        fun getById(id: String): GUIEntity? {
+            return guis[id]
+        }
 
         fun getByPlayer(player: Player): GUIEntity? {
             val guiId = playersGUI[player] ?: return null

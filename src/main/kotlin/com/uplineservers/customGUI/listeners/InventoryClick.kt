@@ -1,42 +1,28 @@
 package com.uplineservers.customGUI.listeners
 
+import com.uplineservers.customGUI.services.GUISync
 import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.plugin.java.JavaPlugin
 
-/**
- * Handles inventory events for custom GUIs
- */
-class InventoryListener(private val plugin: JavaPlugin) : Listener {
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    fun onInventoryOpen(event: org.bukkit.event.inventory.InventoryOpenEvent) {
-        val player = event.player as Player
-        val gui = GUIStorage.getByInventory(event.inventory)
-        if(gui == null) return
-        if(gui.isUpdating) return
-
-        plugin.logger.info("Player ${player.name} opened a GUI: ${gui?.title ?: "Unknown"}")
-        if (gui.onOpen != null) {
-            // Call the onOpen callback if it exists
-            GUIStorage.addPlayer(gui, player);
-            gui.onOpen!!.invoke(event)
-        }
-    }
-
+class InventoryClick(private val plugin: JavaPlugin) : Listener {
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
         val gui = GUIStorage.getByPlayer(player) ?: return
+
+        if(gui.isUpdating) {
+            // Ignore clicks while the GUI is updating
+            event.isCancelled = true
+            return
+        }
 
         val clickedSlot = event.rawSlot
         val clickedItem = event.currentItem
@@ -126,7 +112,6 @@ class InventoryListener(private val plugin: JavaPlugin) : Listener {
 
         // Handle number key (hotbar swap)
         if (event.click == ClickType.NUMBER_KEY) {
-            val hotbarSlot = event.hotbarButton
             val guiSlot = event.rawSlot
 
             if (guiSlot < gui.size) {
@@ -138,6 +123,8 @@ class InventoryListener(private val plugin: JavaPlugin) : Listener {
                 }
             }
         }
+
+        GUISync().syncInventoryToAllPlayers(gui)
     }
 
     @EventHandler
@@ -154,26 +141,5 @@ class InventoryListener(private val plugin: JavaPlugin) : Listener {
                 }
             }
         }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    fun onInventoryClose(event: InventoryCloseEvent) {
-        val player = event.player
-        val gui = GUIStorage.getByPlayer(player as Player)
-
-        if(gui == null) return
-        if(gui.isUpdating) return
-
-        if (gui.onClose != null) {
-
-            gui.onClose!!.invoke(event)
-            if (gui.players.isEmpty()) {
-                plugin.logger.info("All players have closed the GUI: ${gui.title}. Cleaning up.")
-                GUIStorage.remove(gui);
-            } else {
-                plugin.logger.info("Player ${player.name} closed the GUI: ${gui.title}. Remaining players: ${gui.players.size}")
-            }
-        }
-        GUIStorage.removePlayer(player)
     }
 }

@@ -18,6 +18,7 @@ class GUIBuild {
                 require(gui.size % 9 == 0) { "Chest size must be a multiple of 9" }
                 Bukkit.createInventory(null, gui.size, Component.text(gui.title))
             }
+
             else -> {
                 Bukkit.createInventory(null, gui.type!!, Component.text(gui.title))
             }
@@ -34,7 +35,7 @@ class GUIBuild {
     }
 
     fun update(gui: GUIEntity) {
-        if(gui.inventory == null) return
+        if (gui.inventory == null) return
         val oldContents = gui.inventory!!.contents.copyOf()
 
         val inventory = createInventory(gui)
@@ -49,7 +50,7 @@ class GUIBuild {
         gui.inventory = inventory
 
         gui.isUpdating = true
-        gui.players.toList().forEach { player ->
+        for (player in gui.players) {
             player.closeInventory()
             player.openInventory(inventory)
         }

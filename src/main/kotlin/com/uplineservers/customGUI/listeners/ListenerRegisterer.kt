@@ -7,7 +7,10 @@ class ListenerRegisterer(private val plugin: JavaPlugin) {
         plugin.logger.info("Registering event listeners...")
 
         val pluginManager = plugin.server.pluginManager
-        pluginManager.registerEvents(InventoryListener(plugin), plugin)
+        pluginManager.registerEvents(InventoryOpen(plugin), plugin)
+        pluginManager.registerEvents(InventoryClose(plugin), plugin)
+        pluginManager.registerEvents(InventoryClick(plugin), plugin)
+
 
         plugin.logger.info("Event listeners registered successfully!")
     }
