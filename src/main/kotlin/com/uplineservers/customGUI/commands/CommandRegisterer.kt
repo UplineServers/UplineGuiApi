@@ -9,7 +9,6 @@ class CommandRegisterer(private val plugin: JavaPlugin) {
     init {
         plugin.logger.info("Registering commands...")
 
-        plugin.getCommand("guihelp")?.setExecutor(HelpCommand(plugin))
         plugin.getCommand("guitest")?.setExecutor(TestCommand())
         plugin.getCommand("guiinfo")?.setExecutor(InfoCommand(plugin))
 

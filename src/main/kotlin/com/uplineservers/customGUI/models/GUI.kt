@@ -1,7 +1,6 @@
-package com.uplineservers.customGUI.entities
+package com.uplineservers.customGUI.models
 
 import com.uplineservers.customGUI.services.GUIBuild
-import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
@@ -10,10 +9,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
-/**
- * Simple GUI entity - just data
- */
-class GUIEntity(
+class GUI(
     val id: String = UUID.randomUUID().toString(),
     var type: InventoryType? = null,
     title: String = "Custom GUI",
@@ -27,9 +23,7 @@ class GUIEntity(
 
     var inventory: Inventory? = null,
 
-    var players: MutableList<Player> = mutableListOf(),
-
-    // Timeout-related fields for delayed GUI removal
+    // Timeout for deleing the gui
     var removalTask: BukkitTask? = null,
     var removalDelay: Long = 0L,
 
@@ -39,7 +33,7 @@ class GUIEntity(
     var onClick: ((InventoryClickEvent) -> Unit)? = null,
     var onPlayerInventoryClick: ((InventoryClickEvent) -> Unit)? = null,
 
-    ) {
+) {
     private var _title: String = title
 
     var title: String
@@ -50,5 +44,4 @@ class GUIEntity(
                 GUIBuild.update(this)
             }
         }
-
 }

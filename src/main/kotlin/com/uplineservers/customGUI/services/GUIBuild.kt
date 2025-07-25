@@ -1,6 +1,6 @@
 package com.uplineservers.customGUI.services
 
-import com.uplineservers.customGUI.entities.GUIEntity
+import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.storage.GUIStorage
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -10,8 +10,7 @@ import kotlin.collections.component2
 
 class GUIBuild {
     companion object {
-
-        private fun createInventory(gui: GUIEntity): org.bukkit.inventory.Inventory {
+        private fun createInventory(gui: GUI): org.bukkit.inventory.Inventory {
             if (gui.type == null)
                 gui.type = InventoryType.CHEST
 
@@ -27,7 +26,7 @@ class GUIBuild {
             }
         }
 
-        fun build(gui: GUIEntity) {
+        fun build(gui: GUI) {
             val inventory = createInventory(gui)
             gui.items.forEach { (slot, item) ->
                 inventory.setItem(slot, item.item)
@@ -36,7 +35,7 @@ class GUIBuild {
             GUIStorage.add(gui)
         }
 
-        fun update(gui: GUIEntity) {
+        fun update(gui: GUI) {
             if (gui.inventory == null) return
             val oldContents = gui.inventory!!.contents.copyOf()
 
@@ -52,7 +51,7 @@ class GUIBuild {
             gui.inventory = inventory
 
             gui.isUpdating = true
-            for (player in gui.players) {
+            for (player in GUIStorage.findPlayers(gui.id)) {
                 player.closeInventory()
                 player.openInventory(inventory)
             }

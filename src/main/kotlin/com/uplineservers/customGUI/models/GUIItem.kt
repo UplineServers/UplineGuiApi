@@ -1,4 +1,4 @@
-package com.uplineservers.customGUI.entities
+package com.uplineservers.customGUI.models
 
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack

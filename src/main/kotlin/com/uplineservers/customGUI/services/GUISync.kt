@@ -1,16 +1,17 @@
 package com.uplineservers.customGUI.services
 
-import com.uplineservers.customGUI.entities.GUIEntity
+import com.uplineservers.customGUI.models.GUI
+import com.uplineservers.customGUI.storage.GUIStorage
 
 class GUISync {
     companion object {
-        fun fullSync(gui: GUIEntity) {
-            if (gui.inventory == null || gui.players.size < 2) return
+        fun fullSync(gui: GUI) {
+            val players = GUIStorage.findPlayers(gui.id)
+
+            if (gui.inventory == null || players.size < 2) return
 
             gui.isUpdating = true
-            // Update inventory contents for all players viewing this GUI
-            for (player in gui.players) {
-                // Copy the current inventory contents to each player's view
+            for (player in players) {
                 for (slot in 0 until gui.inventory!!.size) {
                     val item = gui.inventory!!.getItem(slot)
                     player.openInventory.setItem(slot, item?.clone())
@@ -19,12 +20,12 @@ class GUISync {
             gui.isUpdating = false
         }
 
-        fun slotSync(gui: GUIEntity, slot: Int) {
-            if (gui.inventory == null || gui.players.isEmpty()) return
+        fun slotSync(gui: GUI, slot: Int) {
+            val players = GUIStorage.findPlayers(gui.id)
+            if (gui.inventory == null || players.isEmpty()) return
 
             gui.isUpdating = true
-            // Update a specific slot for all players viewing this GUI
-            for (player in gui.players) {
+            for (player in players) {
                 val item = gui.inventory!!.getItem(slot)
                 player.openInventory.setItem(slot, item?.clone())
             }

@@ -1,9 +1,10 @@
 package com.uplineservers.customGUI.commands
 
-import com.uplineservers.customGUI.entities.GUIEntity
-import com.uplineservers.customGUI.entities.GUIItem
+import com.uplineservers.customGUI.models.GUI
+import com.uplineservers.customGUI.models.GUIItem
 import com.uplineservers.customGUI.services.GUIBuild
 import com.uplineservers.customGUI.services.GUIOpen
+import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -27,7 +28,7 @@ class TestCommand() : CommandExecutor {
             return true
 
         // Create a new GUI using the service manager
-        val gui = GUIEntity(
+        val gui = GUI(
             id = "test_menu",
             title = "§6§lMain Menu",
             size = 27,
@@ -36,12 +37,9 @@ class TestCommand() : CommandExecutor {
 
         // Set up GUI items using the GUI build service
         val itemStack = ItemStack(Material.DIAMOND_SWORD)
-        val itemMeta = itemStack.itemMeta
-        itemMeta?.setDisplayName("§bExample Item")
-        itemMeta?.lore = listOf("§7Click me!")
-        itemStack.itemMeta = itemMeta
+        itemStack.itemMeta.displayName(Component.text("§bExample Item"))
+        itemStack.itemMeta.lore(listOf(Component.text("§7This is an example item.")))
 
-        // Add item to the GUI items map instead of directly to inventory
         gui.items[13] = GUIItem(
             item = itemStack,
             onClick = { event ->
@@ -71,21 +69,17 @@ class TestCommand() : CommandExecutor {
                 event.isCancelled = true
             }
         )
-        
-        // Build the inventory using GUIBuild service
-        GUIBuild.build(gui)
 
-        // Set up open handler
         gui.onOpen = { event ->
             event.player.sendMessage("§7Welcome to the main menu!")
         }
         
-        // Set up close handler
         gui.onClose = { event ->
             event.player.sendMessage("§7Thanks for using the main menu!")
         }
-        
-        // Create and open the GUI using the GUI manager
+
+        GUIBuild.build(gui)
+
         sender.openInventory(gui.inventory!!)
         
         return true

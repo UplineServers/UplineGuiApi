@@ -1,6 +1,6 @@
 package com.uplineservers.customGUI.storage
 
-import com.uplineservers.customGUI.entities.GUIEntity
+import com.uplineservers.customGUI.models.GUI
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -9,71 +9,56 @@ import java.util.concurrent.ConcurrentHashMap
 
 class GUIStorage {
     companion object {
-        val guis = ConcurrentHashMap<String, GUIEntity>()
+        val guis = ConcurrentHashMap<String, GUI>()
         val playersGUI = ConcurrentHashMap<Player, String>()
 
-        fun getById(id: String): GUIEntity? {
+        fun getById(id: String): GUI? {
             return guis[id]
         }
 
-        fun getByPlayer(player: Player): GUIEntity? {
+        fun getByPlayer(player: Player): GUI? {
             val guiId = playersGUI[player] ?: return null
             return guis[guiId]
         }
 
-        fun getByInventory(inventory: Inventory): GUIEntity? {
+        fun getByInventory(inventory: Inventory): GUI? {
             return guis.values.find { it.inventory == inventory }
         }
 
-        fun add(gui: GUIEntity) {
+        fun add(gui: GUI) {
             guis[gui.id] = gui
         }
 
-        fun addPlayer(gui: GUIEntity, player: Player) {
-            if (!gui.players.contains(player)) {
-                gui.players.add(player)
-                playersGUI[player] = gui.id // Store player-GUI mapping
-            }
+        fun findPlayers(id: String): List<Player> {
+            return playersGUI.filterValues { it == id }.keys.toList()
+        }
+
+        fun addPlayer(id: String, player: Player) {
+            playersGUI[player] = id
         }
 
         fun removePlayer(player: Player) {
-            val guiId = playersGUI.remove(player) ?: return
-            val gui = guis[guiId] ?: return
-            gui.players.remove(player)
+            playersGUI.remove(player) ?: return
         }
 
-        fun scheduleRemoval(gui: GUIEntity, plugin: JavaPlugin) {
-            // Cancel any existing removal task
+        fun scheduleRemoval(gui: GUI, plugin: JavaPlugin) {
             gui.removalTask?.cancel()
             
-            // Schedule a new removal task
             gui.removalTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
-                if (gui.players.isEmpty()) {
+                if (findPlayers(gui.id).isEmpty()) {
                     plugin.logger.info("Removing GUI after timeout: ${gui.title}")
                     guis.remove(gui.id)
                 }
-            }, gui.removalDelay * 20L) // Convert seconds to ticks (20 ticks = 1 second)
+            }, gui.removalDelay * 20L)
         }
 
-        fun cancelRemoval(gui: GUIEntity) {
+        fun cancelRemoval(gui: GUI) {
             gui.removalTask?.cancel()
             gui.removalTask = null
         }
 
-        fun remove(gui: GUIEntity) {
+        fun remove(gui: GUI) {
             guis.remove(gui.id)
-        }
-
-        fun toNBT(): Map<String, Any> {
-            // Convert the GUI storage to a serializable format
-            return guis.mapValues { (_, gui) ->
-                mapOf(
-                    "id" to gui.id,
-                    "title" to gui.title,
-                    "size" to gui.size,
-                    "items" to gui.inventory?.contents?.map { it?.serialize() ?: emptyMap<Any, Any>() },
-                )
-            }
         }
     }
 }

@@ -15,11 +15,6 @@ commands:
     usage: /<command>
     permission: customgui.use
     permission-message: You do not have permission to use this command
-  guihelp:
-    description: Displays help for the custom GUI command
-    usage: /<command>
-    permission: customgui.help
-    permission-message: You do not have permission to use this command
   guiinfo:
     description: Displays information about the custom GUI plugin
     usage: /<command>

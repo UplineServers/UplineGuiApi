@@ -9,13 +9,12 @@ class GUIOpen {
             // Check if gui already exists
             val existingGui = GUIStorage.getById(id)
             if (existingGui != null) {
-                if (existingGui.inventory == null) throw IllegalStateException("GUI inventory is null for id: $id")
+                if (existingGui.inventory == null)
+                    throw IllegalStateException("GUI inventory is null for id: $id")
                 player.openInventory(existingGui.inventory!!)
                 return true
             }
-
             return false
         }
     }
-
 }

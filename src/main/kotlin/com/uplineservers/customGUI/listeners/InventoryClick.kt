@@ -18,8 +18,8 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
         val player = event.whoClicked as? Player ?: return
         val gui = GUIStorage.getByPlayer(player) ?: return
 
+        // Ignore clicks while the GUI is updating
         if(gui.isUpdating) {
-            // Ignore clicks while the GUI is updating
             event.isCancelled = true
             return
         }
@@ -27,7 +27,7 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
         val clickedSlot = event.rawSlot
         val clickedItem = event.currentItem
 
-        // Handle clicks only in GUI inventory area (not player inventory)
+        // Handle clicks only in GUI inventory area
         if (clickedSlot < gui.size) {
             val guiItem = gui.items[clickedSlot]
 
@@ -107,7 +107,7 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
             }
         }
 
-        // Handle number key (hotbar swap)
+        // Handle number key
         if (event.click == ClickType.NUMBER_KEY) {
             if (event.slot < gui.size) {
                 val guiItem = gui.items[event.slot]
