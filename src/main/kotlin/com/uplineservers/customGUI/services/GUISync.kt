@@ -3,11 +3,8 @@ package com.uplineservers.customGUI.services
 import com.uplineservers.customGUI.entities.GUIEntity
 
 class GUISync {
-
     companion object {
-
-        // TODO: Optimize this to only sync changed items instead of the whole inventory
-        fun syncInventoryToAllPlayers(gui: GUIEntity) {
+        fun fullSync(gui: GUIEntity) {
             if (gui.inventory == null || gui.players.size < 2) return
 
             gui.isUpdating = true
@@ -22,7 +19,7 @@ class GUISync {
             gui.isUpdating = false
         }
 
-        fun syncInventorySlot(gui: GUIEntity, slot: Int) {
+        fun slotSync(gui: GUIEntity, slot: Int) {
             if (gui.inventory == null || gui.players.isEmpty()) return
 
             gui.isUpdating = true

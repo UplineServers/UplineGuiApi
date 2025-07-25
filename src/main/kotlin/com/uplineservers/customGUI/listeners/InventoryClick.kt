@@ -102,7 +102,7 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
                 }
 
                 player.inventory.setItem(event.slot, clickedItem)
-                GUISync.syncInventorySlot(gui, slot)
+                GUISync.slotSync(gui, slot)
                 return
             }
         }
@@ -119,7 +119,7 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
             }
         }
 
-        GUISync.syncInventorySlot(gui, event.slot)
+        GUISync.slotSync(gui, event.slot)
     }
 
     @EventHandler

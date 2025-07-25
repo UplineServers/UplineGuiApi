@@ -47,7 +47,7 @@ class GUIEntity(
         set(value) {
             if (_title != value) {
                 _title = value
-                GUIBuild().update(this)
+                GUIBuild.update(this)
             }
         }
 

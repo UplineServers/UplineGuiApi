@@ -4,9 +4,7 @@ import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.entity.Player
 
 class GUIOpen {
-
     companion object {
-
         fun openIfExists(player: Player, id: String): Boolean {
             // Check if gui already exists
             val existingGui = GUIStorage.getById(id)

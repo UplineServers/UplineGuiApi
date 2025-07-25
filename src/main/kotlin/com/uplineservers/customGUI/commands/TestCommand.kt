@@ -73,7 +73,7 @@ class TestCommand() : CommandExecutor {
         )
         
         // Build the inventory using GUIBuild service
-        GUIBuild().build(gui)
+        GUIBuild.build(gui)
 
         // Set up open handler
         gui.onOpen = { event ->
