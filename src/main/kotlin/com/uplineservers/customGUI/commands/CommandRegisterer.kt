@@ -12,10 +12,6 @@ class CommandRegisterer(private val plugin: JavaPlugin) {
         plugin.getCommand("guitest")?.setExecutor(TestCommand())
         plugin.getCommand("guiinfo")?.setExecutor(InfoCommand(plugin))
 
-        // Add other commands here as you create them
-        // getCommand("confirmdialog")?.setExecutor(ConfirmDialogCommand(serviceManager))
-        // getCommand("dynamicgui")?.setExecutor(DynamicGUICommand(serviceManager))
-
         plugin.logger.info("Commands registered successfully!")
     }
 }
