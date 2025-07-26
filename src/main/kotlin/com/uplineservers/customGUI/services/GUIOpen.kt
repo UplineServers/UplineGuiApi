@@ -1,5 +1,6 @@
 package com.uplineservers.customGUI.services
 
+import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.entity.Player
 

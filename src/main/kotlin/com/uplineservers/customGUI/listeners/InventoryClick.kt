@@ -1,125 +1,143 @@
 package com.uplineservers.customGUI.listeners
 
+import com.uplineservers.customGUI.models.GUI
+import com.uplineservers.customGUI.models.SHIFT_PROTECTION
 import com.uplineservers.customGUI.services.GUISync
 import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.inventory.ClickType
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.event.inventory.InventoryType
+import org.bukkit.event.inventory.*
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 class InventoryClick(private val plugin: JavaPlugin) : Listener {
+
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
         val gui = GUIStorage.getByPlayer(player) ?: return
 
-        // Ignore clicks while the GUI is updating
-        if(gui.isUpdating) {
+        if (gui.isUpdating) {
             event.isCancelled = true
             return
         }
 
         val clickedSlot = event.rawSlot
         val clickedItem = event.currentItem
+        val clickedInventory = event.clickedInventory
 
-        // Handle clicks only in GUI inventory area
-        if (clickedSlot < gui.size) {
-            val guiItem = gui.items[clickedSlot]
+        if (clickedInventory == null || clickedSlot < 0)
+            return
 
-            // Allow per-slot click
-            guiItem?.onClick?.invoke(event)
-            gui.onClick?.invoke(event)
+        if (clickedInventory.type == InventoryType.PLAYER)
+            return handlePlayerInventoryClick(event, gui, clickedItem)
 
-            if(event.isCancelled) return
+        handleGuiSlotClick(event, gui, clickedSlot, clickedItem)
+        if (event.isCancelled) return
 
-            // Handle item pickup from GUI
-            if (event.cursor.type != Material.AIR && !(guiItem?.isMovable ?: gui.isPutable))
-                event.isCancelled = true
+        GUISync.slotSync(gui, clickedSlot)
+    }
 
-            // Handle item taking from GUI
-            if (clickedItem != null && clickedItem.type != Material.AIR && !(guiItem?.isMovable ?: gui.isTakeable))
-                event.isCancelled = true
+    private fun handlePlayerInventoryClick(event: InventoryClickEvent, gui: GUI, clickedItem: ItemStack?) {
+        val player = event.whoClicked as? Player ?: return
+
+        gui.onPlayerInventoryClick?.invoke(event)
+
+        if (gui.shiftProtection == SHIFT_PROTECTION.BLOCK) event.isCancelled = true
+        if (event.isCancelled || gui.shiftProtection == SHIFT_PROTECTION.NONE) return
+        if (event.isShiftClick && gui.shiftProtection == SHIFT_PROTECTION.SMART) {
+            event.isCancelled = true
+            if (clickedItem != null && clickedItem.type != Material.AIR)
+                handleShiftClick(player, gui, event.slot, clickedItem)
         }
+    }
 
-        if(event.clickedInventory?.type == InventoryType.PLAYER){
-            gui.onPlayerInventoryClick?.invoke(event)
-            if(event.isCancelled) return
-        }
+    private fun handleGuiSlotClick(event: InventoryClickEvent, gui: GUI, slot: Int, clickedItem: ItemStack?) {
+        val guiItem = gui.items[slot]
+        val isPutable = guiItem?.isMovable ?: gui.isPutable
+        val isTakeable = guiItem?.isMovable ?: gui.isTakeable
 
-        if (event.isShiftClick && event.clickedInventory?.type == InventoryType.PLAYER) {
+        event.whoClicked.sendMessage("isPutable: $isPutable, isTakeable: $isTakeable")
+
+        guiItem?.onClick?.invoke(event)
+        gui.onClick?.invoke(event)
+
+        if (event.isCancelled) return
+
+        // Prevent putting items
+        if ((event.click == ClickType.NUMBER_KEY || event.cursor.type != Material.AIR) && !isPutable)
             event.isCancelled = true
 
-            if(clickedItem == null || clickedItem.type == Material.AIR)
-                return
+        // Prevent taking items
+        if ((event.click == ClickType.NUMBER_KEY || clickedItem?.type != Material.AIR) && !isTakeable)
+            event.isCancelled = true
+    }
 
-            // Try manually placing the item in a valid slot
-            for (slot in 0 until gui.size) {
-                val guiItem = gui.items[slot]
-                val slotItem = gui.inventory?.getItem(slot)
+    private fun handleShiftClick(player: Player, gui: GUI, playerSlot: Int, clickedItem: ItemStack) {
+        val guiInventory = gui.inventory ?: return
+        val stackableSlots = mutableListOf<Int>()
+        val emptySlots = mutableListOf<Int>()
 
-                val isPutable = guiItem?.isMovable ?: gui.isPutable
+        for (slot in 0 until gui.size) {
+            val guiItem = gui.items[slot]
+            val slotItem = guiInventory.getItem(slot)
+            val isMovable = guiItem?.isMovable ?: gui.isPutable
 
-                val canStack = slotItem != null &&
-                        slotItem.type == clickedItem.type &&
-                        slotItem.amount < slotItem.maxStackSize
+            if (!isMovable) continue
 
-                val isEmpty = slotItem == null || slotItem.type == Material.AIR
+            if (slotItem != null &&
+                slotItem.type == clickedItem.type &&
+                slotItem.amount < slotItem.maxStackSize
+            ) stackableSlots += slot
+            else if (slotItem == null || slotItem.type == Material.AIR)
+                emptySlots += slot
+        }
 
-                if (!isPutable) continue
-                if (!(canStack || isEmpty)) continue
-
-                val toInsert = clickedItem.clone()
-                if (canStack) {
-                    val spaceLeft = slotItem.maxStackSize - slotItem.amount
-                    val toAdd = toInsert.amount.coerceAtMost(spaceLeft)
-
-                    slotItem.amount += toAdd
-                    clickedItem.amount -= toAdd
-
-                    if (clickedItem.amount <= 0) {
-                        player.inventory.setItem(event.slot, null)
-                    } else {
-                        player.inventory.setItem(event.slot, clickedItem)
-                    }
-                } else {
-                    val toInsert = clickedItem.clone()
-                    val toPlace = toInsert.amount.coerceAtMost(clickedItem.maxStackSize)
-
-                    toInsert.amount = toPlace
-                    gui.inventory?.setItem(slot, toInsert)
-
-                    clickedItem.amount -= toPlace
-                    if (clickedItem.amount <= 0) {
-                        player.inventory.setItem(event.slot, null)
-                    } else {
-                        player.inventory.setItem(event.slot, clickedItem)
-                    }
-                }
-
-                player.inventory.setItem(event.slot, clickedItem)
+        for (slot in stackableSlots + emptySlots) {
+            val inserted = tryInsertIntoGui(gui, slot, clickedItem)
+            if (inserted) {
+                updatePlayerInventory(player, playerSlot, clickedItem)
                 GUISync.slotSync(gui, slot)
                 return
             }
         }
+    }
 
-        // Handle number key
-        if (event.click == ClickType.NUMBER_KEY) {
-            if (event.slot < gui.size) {
-                val guiItem = gui.items[event.slot]
-                val isMovable = guiItem?.isMovable ?: gui.isPutable
+    private fun tryInsertIntoGui(gui: GUI, slot: Int, clickedItem: ItemStack): Boolean {
+        val guiInventory = gui.inventory ?: return false
+        val slotItem = guiInventory.getItem(slot)
 
-                if (!isMovable) {
-                    event.isCancelled = true
-                }
-            }
+        if (slotItem != null &&
+            slotItem.type == clickedItem.type &&
+            slotItem.amount < slotItem.maxStackSize
+        ) {
+            val spaceLeft = slotItem.maxStackSize - slotItem.amount
+            val toAdd = clickedItem.amount.coerceAtMost(spaceLeft)
+
+            slotItem.amount += toAdd
+            clickedItem.amount -= toAdd
+            return true
         }
 
-        GUISync.slotSync(gui, event.slot)
+        if (slotItem == null || slotItem.type == Material.AIR) {
+            val toPlace = clickedItem.amount.coerceAtMost(clickedItem.maxStackSize)
+            val toInsert = clickedItem.clone().apply { amount = toPlace }
+
+            guiInventory.setItem(slot, toInsert)
+            clickedItem.amount -= toPlace
+            return true
+        }
+
+        return false
+    }
+
+    private fun updatePlayerInventory(player: Player, slot: Int, clickedItem: ItemStack) {
+        if (clickedItem.amount <= 0)
+            player.inventory.setItem(slot, null)
+        else
+            player.inventory.setItem(slot, clickedItem)
     }
 
     @EventHandler

@@ -9,6 +9,12 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
+enum class SHIFT_PROTECTION {
+    NONE,
+    BLOCK,
+    SMART,
+}
+
 class GUI(
     val id: String = UUID.randomUUID().toString(),
     var type: InventoryType? = null,
@@ -20,8 +26,10 @@ class GUI(
     val isPutable: Boolean = false,
     val isTakeable: Boolean = false,
     var isUpdating: Boolean = false,
+    val shiftProtection: SHIFT_PROTECTION = SHIFT_PROTECTION.SMART,
 
     var inventory: Inventory? = null,
+    val isPersistent: Boolean = false,
 
     // Timeout for deleing the gui
     var removalTask: BukkitTask? = null,
@@ -32,7 +40,6 @@ class GUI(
     var onClose: ((InventoryCloseEvent) -> Unit)? = null,
     var onClick: ((InventoryClickEvent) -> Unit)? = null,
     var onPlayerInventoryClick: ((InventoryClickEvent) -> Unit)? = null,
-
 ) {
     private var _title: String = title
 

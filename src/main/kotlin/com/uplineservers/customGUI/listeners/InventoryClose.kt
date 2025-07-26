@@ -24,6 +24,7 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
             gui.onClose!!.invoke(event)
 
         if (GUIStorage.findPlayers(gui.id).isEmpty()) {
+            plugin.logger.info("Removing GUI after close: ${gui.title}")
             if(gui.removalDelay > 0)
                 GUIStorage.scheduleRemoval(gui, plugin)
             else

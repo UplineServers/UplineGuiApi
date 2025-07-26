@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 class GUIStorage {
     companion object {
-        val guis = ConcurrentHashMap<String, GUI>()
-        val playersGUI = ConcurrentHashMap<Player, String>()
+        val guis: MutableMap<String, GUI> = mutableMapOf()
+        val playersGUI: MutableMap<Player, String> = mutableMapOf()
 
         fun getById(id: String): GUI? {
             return guis[id]
@@ -47,7 +47,7 @@ class GUIStorage {
             gui.removalTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
                 if (findPlayers(gui.id).isEmpty()) {
                     plugin.logger.info("Removing GUI after timeout: ${gui.title}")
-                    guis.remove(gui.id)
+                    this.remove(gui)
                 }
             }, gui.removalDelay * 20L)
         }

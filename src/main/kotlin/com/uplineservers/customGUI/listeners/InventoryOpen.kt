@@ -14,13 +14,14 @@ class InventoryOpen(private val plugin: JavaPlugin) : Listener {
     fun onInventoryOpen(event: InventoryOpenEvent) {
         val player = event.player as Player
         val gui = GUIStorage.getByInventory(event.inventory)
+
         if (gui == null) return
         if (gui.isUpdating) return
 
         GUIStorage.cancelRemoval(gui)
+        GUIStorage.addPlayer(gui.id, player)
 
         if (gui.onOpen != null) {
-            GUIStorage.addPlayer(gui.id, player);
             gui.onOpen!!.invoke(event)
         }
     }
