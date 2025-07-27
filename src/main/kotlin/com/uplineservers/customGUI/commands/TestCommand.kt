@@ -21,7 +21,7 @@ class TestCommand : CommandExecutor {
         }
 
         if (args.isEmpty()) {
-            sender.sendMessage("§eUsage: /guitest <menu|trash|storage|display|action|placeable|takeable|movable>")
+            sender.sendMessage("§eUsage: /guitest <menu|placeable|takeable|movable|action>")
             return true
         }
 

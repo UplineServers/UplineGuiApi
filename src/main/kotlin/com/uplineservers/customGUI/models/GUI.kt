@@ -29,7 +29,6 @@ class GUI(
     val shiftProtection: SHIFT_PROTECTION = SHIFT_PROTECTION.SMART,
 
     var inventory: Inventory? = null,
-    val isPersistent: Boolean = false,
 
     // Timeout for deleing the gui
     var removalTask: BukkitTask? = null,
