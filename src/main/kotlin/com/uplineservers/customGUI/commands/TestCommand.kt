@@ -21,7 +21,7 @@ class TestCommand : CommandExecutor {
         }
 
         if (args.isEmpty()) {
-            sender.sendMessage("§eUsage: /guitest <menu|placeable|takeable|movable|action>")
+            sender.sendMessage("§eUsage: /guitest <menu|placeable|takeable|movable|action|item>")
             return true
         }
 
@@ -31,6 +31,7 @@ class TestCommand : CommandExecutor {
             "takeable" -> openTakeableGUI(sender)
             "movable" -> openMovableGUI(sender)
             "action" -> openActionGUI(sender)
+            "item" -> openItemSavedGUI(sender)
             else -> sender.sendMessage("§cUnknown test GUI: ${args[0]}")
         }
 
@@ -133,6 +134,28 @@ class TestCommand : CommandExecutor {
             p.setFireTicks(60)
             p.sendMessage("§cYou clicked the fire item!")
         }
+
+        GUIBuild.build(gui)
+        player.openInventory(gui.inventory!!)
+    }
+
+    private fun openItemSavedGUI(player: Player) {
+        if (GUIOpen.openIfExists(player, "item_saved_gui")) return
+
+        val playerHand = player.inventory.itemInMainHand
+        if(playerHand.type == Material.AIR) {
+            player.sendMessage("§cYou must hold an item to save it in the GUI.")
+            return
+        }
+
+        val gui = GUI(
+            id = "item_saved_gui",
+            title = "§eItem Saved GUI",
+            size = 9,
+            isPutable = true,
+            isTakeable = true,
+            dataItem = playerHand
+        )
 
         GUIBuild.build(gui)
         player.openInventory(gui.inventory!!)

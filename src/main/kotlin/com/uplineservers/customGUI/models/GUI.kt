@@ -6,6 +6,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
@@ -29,6 +30,7 @@ class GUI(
     val shiftProtection: SHIFT_PROTECTION = SHIFT_PROTECTION.SMART,
 
     var inventory: Inventory? = null,
+    var dataItem: ItemStack? = null,
 
     // Timeout for deleing the gui
     var removalTask: BukkitTask? = null,

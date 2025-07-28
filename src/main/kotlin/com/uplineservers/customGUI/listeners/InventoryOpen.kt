@@ -18,11 +18,13 @@ class InventoryOpen(private val plugin: JavaPlugin) : Listener {
         if (gui == null) return
         if (gui.isUpdating) return
 
+        if (gui.dataItem != null)
+            GUIStorage.loadStoredInventoryIntoGui(gui.dataItem!!, gui.inventory)
+
         GUIStorage.cancelRemoval(gui)
         GUIStorage.addPlayer(gui.id, player)
 
-        if (gui.onOpen != null) {
+        if (gui.onOpen != null)
             gui.onOpen!!.invoke(event)
-        }
     }
 }
