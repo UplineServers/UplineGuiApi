@@ -2,7 +2,7 @@ package com.uplineservers.customGUI.listeners
 
 import org.bukkit.plugin.java.JavaPlugin
 
-class ListenerRegisterer(private val plugin: JavaPlugin) {
+class ListenerRegisterer(plugin: JavaPlugin) {
     init {
         plugin.logger.info("Registering event listeners...")
 

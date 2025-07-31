@@ -1,6 +1,7 @@
 package com.uplineservers.customGUI.listeners
 
 import com.uplineservers.customGUI.storage.GUIStorage
+import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -13,21 +14,29 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryClose(event: InventoryCloseEvent) {
         val player = event.player
-        val gui = GUIStorage.getByPlayer(player as Player)
+        if (player !is Player) return
 
-        if(gui == null || gui.isUpdating) return
+        val gui = GUIStorage.getByInventory(event.inventory)
+        if (gui == null) return
+        if (gui.isUpdating) return
 
-        // Remove the player from the GUI first
         GUIStorage.removePlayer(player)
 
         if (gui.onClose != null)
             gui.onClose!!.invoke(event)
 
+        if (gui.dataItem != null && gui.inventory != null){
+//            if (player.gameMode == GameMode.CREATIVE)
+//                player.sendMessage("§cYou cannot save a custom inventory to an item in creative mode.")
+            GUIStorage.saveInventoryToItem(gui)
+        }
+
         if (GUIStorage.findPlayers(gui.id).isEmpty()) {
-            if(gui.removalDelay > 0)
+            if (gui.removalDelay > 0)
                 GUIStorage.scheduleRemoval(gui, plugin)
             else
                 GUIStorage.remove(gui)
         }
+
     }
 }

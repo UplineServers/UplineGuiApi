@@ -8,18 +8,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.plugin.java.JavaPlugin
 
-class InventoryOpen(private val plugin: JavaPlugin) : Listener {
-    
+class InventoryOpen(plugin: JavaPlugin) : Listener {
+
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryOpen(event: InventoryOpenEvent) {
-        val player = event.player as Player
+        val player = event.player
+        if (player !is Player) return
+
         val gui = GUIStorage.getByInventory(event.inventory)
-
-        if (gui == null) return
+        if (gui == null)  return
         if (gui.isUpdating) return
-
-        if (gui.dataItem != null)
-            GUIStorage.loadStoredInventoryIntoGui(gui.dataItem!!, gui.inventory)
 
         GUIStorage.cancelRemoval(gui)
         GUIStorage.addPlayer(gui.id, player)

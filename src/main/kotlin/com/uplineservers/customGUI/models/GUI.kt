@@ -1,12 +1,15 @@
 package com.uplineservers.customGUI.models
 
+import com.uplineservers.customGUI.CustomGUI
 import com.uplineservers.customGUI.services.GUIBuild
+import org.bukkit.NamespacedKey
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
@@ -42,6 +45,7 @@ class GUI(
     var onClick: ((InventoryClickEvent) -> Unit)? = null,
     var onPlayerInventoryClick: ((InventoryClickEvent) -> Unit)? = null,
 ) {
+
     private var _title: String = title
 
     var title: String

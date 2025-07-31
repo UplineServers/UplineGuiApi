@@ -1,18 +1,24 @@
 package com.uplineservers.customGUI.listeners
 
+import com.uplineservers.customGUI.CustomGUI
+import com.uplineservers.customGUI.CustomGUI.Companion.instance
 import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.models.SHIFT_PROTECTION
+import com.uplineservers.customGUI.services.GUIBuild
 import com.uplineservers.customGUI.services.GUISync
 import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.*
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 
-class InventoryClick(private val plugin: JavaPlugin) : Listener {
+class InventoryClick(plugin: JavaPlugin) : Listener {
+    val blockedKey = NamespacedKey.minecraft("gui_blocked")
 
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
@@ -27,6 +33,14 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
         val clickedSlot = event.rawSlot
         val clickedItem = event.currentItem
         val clickedInventory = event.clickedInventory
+
+        if (gui.dataItem != null) {
+            val meta = clickedItem?.itemMeta
+            if (meta?.persistentDataContainer?.get(blockedKey, PersistentDataType.BOOLEAN) == true) {
+                event.isCancelled = true
+                return
+            }
+        }
 
         if (clickedInventory == null || clickedSlot < 0)
             return
@@ -58,8 +72,6 @@ class InventoryClick(private val plugin: JavaPlugin) : Listener {
         val guiItem = gui.items[slot]
         val isPutable = guiItem?.isMovable ?: gui.isPutable
         val isTakeable = guiItem?.isMovable ?: gui.isTakeable
-
-        event.whoClicked.sendMessage("isPutable: $isPutable, isTakeable: $isTakeable")
 
         guiItem?.onClick?.invoke(event)
         gui.onClick?.invoke(event)

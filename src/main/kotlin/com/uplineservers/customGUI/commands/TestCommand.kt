@@ -2,7 +2,6 @@ package com.uplineservers.customGUI.commands
 
 import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.models.GUIItem
-import com.uplineservers.customGUI.models.SHIFT_PROTECTION
 import com.uplineservers.customGUI.services.GUIBuild
 import com.uplineservers.customGUI.services.GUIOpen
 import net.kyori.adventure.text.Component
@@ -78,8 +77,11 @@ class TestCommand : CommandExecutor {
             isPutable = true,
             isTakeable = true
         )
+
         gui.onOpen = { it.player.sendMessage("§bYou can move items in this GUI.") }
+
         GUIBuild.build(gui)
+
         player.openInventory(gui.inventory!!)
     }
 
@@ -131,7 +133,7 @@ class TestCommand : CommandExecutor {
 
         gui.items[4] = GUIItem(ItemStack(Material.FIRE_CHARGE)) {
             val p = it.whoClicked as? Player ?: return@GUIItem
-            p.setFireTicks(60)
+            p.fireTicks = 60
             p.sendMessage("§cYou clicked the fire item!")
         }
 

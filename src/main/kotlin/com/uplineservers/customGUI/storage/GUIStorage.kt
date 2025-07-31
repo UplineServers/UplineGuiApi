@@ -1,10 +1,12 @@
 package com.uplineservers.customGUI.storage
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.uplineservers.customGUI.CustomGUI
 import com.uplineservers.customGUI.models.GUI
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -66,34 +68,54 @@ class GUIStorage {
         fun remove(gui: GUI) {
             guis.remove(gui.id)
 
-            if(gui.dataItem != null && gui.inventory != null)
-                saveInventoryToItem(gui.dataItem!!, gui.inventory!!)
-        }
-
-        fun loadStoredInventoryIntoGui(item: ItemStack, inventory: Inventory?) {
-            if (inventory == null) return
-
-            val meta = item.itemMeta ?: return
-            val json = meta.persistentDataContainer.get(key, PersistentDataType.STRING) ?: return
-
-            val type = object : TypeToken<List<Map<String, Any>?>>() {}.type
-            val itemDataList: List<Map<String, Any>?> = gson.fromJson(json, type)
-
-            itemDataList.mapIndexed { index, map ->
-                val item = map?.let { ItemStack.deserialize(it) }
-                if (index < inventory.size)
-                    inventory.setItem(index, item)
+            // close all inventories of players using this GUI
+            findPlayers(gui.id).forEach { player ->
+                player.closeInventory()
             }
         }
 
-        fun saveInventoryToItem(item: ItemStack, inventory: Inventory) {
+        fun saveInventoryToItem(gui: GUI) {
+            val item = gui.dataItem ?: return
+            val inventory = gui.inventory ?: return
             val meta = item.itemMeta ?: return
 
-            val serializedItems = inventory.contents.map { it?.serialize() }
-            val json = gson.toJson(serializedItems)
+            val serializedItems = inventory.contents.mapIndexedNotNull { index, itemStack ->
+                if (itemStack != null && itemStack.type != Material.AIR) {
+                    mapOf(
+                        "slot" to index,
+                        "item" to itemStack.serialize()
+                    )
+                } else null
+            }
+
+            val json = GsonBuilder().create().toJson(serializedItems)
+
+            if (json.length > 32767) {
+                CustomGUI.instance.logger.warning("NBT data too large to save to item!")
+                return
+            }
 
             meta.persistentDataContainer.set(key, PersistentDataType.STRING, json)
             item.itemMeta = meta
+        }
+
+        fun loadStoredInventoryIntoGui(gui: GUI) {
+            val item = gui.dataItem ?: return
+            val inventory = gui.inventory ?: return
+            val meta = item.itemMeta ?: return
+            val json = meta.persistentDataContainer.get(key, PersistentDataType.STRING) ?: return
+
+            val type = object : TypeToken<List<Map<String, Any>>>() {}.type
+            val savedList: List<Map<String, Any>> = gson.fromJson(json, type)
+
+            for (entry in savedList) {
+                val slot = (entry["slot"] as? Double)?.toInt() ?: continue
+                val itemData = entry["item"] as? Map<String, Any> ?: continue
+
+                if (slot < inventory.size) {
+                    inventory.setItem(slot, ItemStack.deserialize(itemData))
+                }
+            }
         }
     }
 }
