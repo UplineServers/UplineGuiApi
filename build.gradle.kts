@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "2.2.20-Beta1"
-    id("com.gradleup.shadow") version "8.3.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
@@ -19,42 +19,51 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:2.2.20-Beta1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
-    testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    // Adventure API — only include what you use
+    compileOnly("net.kyori:adventure-api:4.14.0")
+    compileOnly("net.kyori:adventure-text-serializer-gson:4.14.0")
+
+    // Kotlin stdlib
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 tasks {
     runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.21")
     }
 
     test {
         useJUnitPlatform()
     }
-}
 
-val targetJavaVersion = 21
-kotlin {
-    jvmToolchain(targetJavaVersion)
-}
+    processResources {
+        val props = mapOf("version" to version)
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching("plugin.yml") {
+            expand(props)
+        }
+    }
 
-tasks.build {
-    dependsOn("shadowJar")
-}
+    // Use shadowJar if you *must* bundle dependencies
+    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+        minimize() // remove unused classes
+        archiveClassifier.set("") // makes the final jar name clean: CustomGUI.jar
 
-tasks.processResources {
-    val props = mapOf("version" to version)
-    inputs.properties(props)
-    filteringCharset = "UTF-8"
-    filesMatching("plugin.yml") {
-        expand(props)
+        // Optional: relocate if needed
+        // relocate("net.kyori", "com.uplineservers.libs.kyori")
+
+        // Optional: exclude if server provides them
+        exclude("META-INF/*.kotlin_module")
+        exclude("kotlin/**")
+    }
+
+    build {
+        dependsOn(shadowJar)
     }
 }

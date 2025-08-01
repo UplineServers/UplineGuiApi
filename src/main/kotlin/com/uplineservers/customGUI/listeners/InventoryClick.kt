@@ -34,16 +34,26 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
         val clickedItem = event.currentItem
         val clickedInventory = event.clickedInventory
 
-        if (gui.dataItem != null) {
+        if (clickedInventory == null || clickedSlot < 0){
+            event.isCancelled = true
+            return
+        }
+
+        if (event.click == ClickType.NUMBER_KEY) {
+            val hotbarSlot = event.hotbarButton
+            val hotbarItem = player.inventory.getItem(hotbarSlot)
+            val meta = hotbarItem?.itemMeta
+            if (meta?.persistentDataContainer?.get(blockedKey, PersistentDataType.BOOLEAN) == true) {
+                event.isCancelled = true
+                return
+            }
+        } else {
             val meta = clickedItem?.itemMeta
             if (meta?.persistentDataContainer?.get(blockedKey, PersistentDataType.BOOLEAN) == true) {
                 event.isCancelled = true
                 return
             }
         }
-
-        if (clickedInventory == null || clickedSlot < 0)
-            return
 
         if (clickedInventory.type == InventoryType.PLAYER)
             return handlePlayerInventoryClick(event, gui, clickedItem)
@@ -70,21 +80,33 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
 
     private fun handleGuiSlotClick(event: InventoryClickEvent, gui: GUI, slot: Int, clickedItem: ItemStack?) {
         val guiItem = gui.items[slot]
-        val isPutable = guiItem?.isMovable ?: gui.isPutable
-        val isTakeable = guiItem?.isMovable ?: gui.isTakeable
+        val isMovable = guiItem?.isMovable
+        val isPutable = isMovable ?: gui.isPutable
+        val isTakeable = isMovable ?: gui.isTakeable
 
         guiItem?.onClick?.invoke(event)
         gui.onClick?.invoke(event)
 
         if (event.isCancelled) return
 
-        // Prevent putting items
-        if ((event.click == ClickType.NUMBER_KEY || event.cursor.type != Material.AIR) && !isPutable)
-            event.isCancelled = true
+        // Handle number key swaps first
+        if (event.click == ClickType.NUMBER_KEY) {
+            if (!isPutable || !isTakeable) {
+                event.isCancelled = true
+                return
+            }
+        }
 
-        // Prevent taking items
-        if ((event.click == ClickType.NUMBER_KEY || clickedItem?.type != Material.AIR) && !isTakeable)
+        // Prevent putting items (cursor -> GUI)
+        if (!isPutable && event.cursor.type != Material.AIR) {
             event.isCancelled = true
+            return
+        }
+
+        // Prevent taking items (GUI -> cursor)
+        if (!isTakeable && clickedItem?.type != Material.AIR) {
+            event.isCancelled = true
+        }
     }
 
     private fun handleShiftClick(player: Player, gui: GUI, playerSlot: Int, clickedItem: ItemStack) {
