@@ -20,15 +20,15 @@ class TestCommand : CommandExecutor {
         }
 
         if (args.isEmpty()) {
-            sender.sendMessage("§eUsage: /guitest <menu|placeable|takeable|movable|action|item>")
+            sender.sendMessage("§eUsage: /guitest <menu | putable | takeable | moveable | action | item>")
             return true
         }
 
         when (args[0].lowercase()) {
             "menu" -> openMainMenu(sender)
-            "placeable" -> openPlaceableGUI(sender)
+            "putable" -> openPutableGUI(sender)
             "takeable" -> openTakeableGUI(sender)
-            "movable" -> openMovableGUI(sender)
+            "moveable" -> openMoveableGUI(sender)
             "action" -> openActionGUI(sender)
             "item" -> openItemSavedGUI(sender)
             else -> sender.sendMessage("§cUnknown test GUI: ${args[0]}")
@@ -67,21 +67,18 @@ class TestCommand : CommandExecutor {
         player.openInventory(gui.inventory!!)
     }
 
-    private fun openMovableGUI(player: Player) {
-        if (GUIOpen.openIfExists(player, "movable_gui")) return
+    private fun openPutableGUI(player: Player) {
+        if (GUIOpen.openIfExists(player, "placeable_gui")) return
 
         val gui = GUI(
-            id = "movable_gui",
-            title = "§bMovable GUI",
+            id = "placeable_gui",
+            title = "§aPlaceable GUI",
             size = 9,
             isPutable = true,
-            isTakeable = true
+            isTakeable = false
         )
-
-        gui.onOpen = { it.player.sendMessage("§bYou can move items in this GUI.") }
-
+        gui.onOpen = { it.player.sendMessage("§aYou can place items here, but not take them out.") }
         GUIBuild.build(gui)
-
         player.openInventory(gui.inventory!!)
     }
 
@@ -107,20 +104,24 @@ class TestCommand : CommandExecutor {
         player.openInventory(gui.inventory!!)
     }
 
-    private fun openPlaceableGUI(player: Player) {
-        if (GUIOpen.openIfExists(player, "placeable_gui")) return
+    private fun openMoveableGUI(player: Player) {
+        if (GUIOpen.openIfExists(player, "movable_gui")) return
 
         val gui = GUI(
-            id = "placeable_gui",
-            title = "§aPlaceable GUI",
+            id = "movable_gui",
+            title = "§bMovable GUI",
             size = 9,
             isPutable = true,
-            isTakeable = false
+            isTakeable = true
         )
-        gui.onOpen = { it.player.sendMessage("§aYou can place items here, but not take them out.") }
+
+        gui.onOpen = { it.player.sendMessage("§bYou can move items in this GUI.") }
+
         GUIBuild.build(gui)
+
         player.openInventory(gui.inventory!!)
     }
+
 
     private fun openActionGUI(player: Player) {
         if (GUIOpen.openIfExists(player, "action_gui")) return

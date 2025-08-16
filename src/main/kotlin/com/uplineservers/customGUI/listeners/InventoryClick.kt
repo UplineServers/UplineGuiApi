@@ -1,10 +1,7 @@
 package com.uplineservers.customGUI.listeners
 
-import com.uplineservers.customGUI.CustomGUI
-import com.uplineservers.customGUI.CustomGUI.Companion.instance
 import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.models.SHIFT_PROTECTION
-import com.uplineservers.customGUI.services.GUIBuild
 import com.uplineservers.customGUI.services.GUISync
 import com.uplineservers.customGUI.storage.GUIStorage
 import org.bukkit.Material
@@ -25,88 +22,72 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
         val player = event.whoClicked as? Player ?: return
         val gui = GUIStorage.getByPlayer(player) ?: return
 
+        val clickedSlot = event.rawSlot
+        val clickedItem = event.currentItem
+        val clickedInventory = event.clickedInventory
+
+        gui.onClick?.invoke(event)
+        if (event.isCancelled) return
+
+        // If updating, just block everything to avoid glitches
         if (gui.isUpdating) {
             event.isCancelled = true
             return
         }
 
-        val clickedSlot = event.rawSlot
-        val clickedItem = event.currentItem
-        val clickedInventory = event.clickedInventory
-
+        // Check if the clicked inventory is within the Inventory
         if (clickedInventory == null || clickedSlot < 0){
             event.isCancelled = true
             return
         }
 
-        if (event.click == ClickType.NUMBER_KEY) {
-            val hotbarSlot = event.hotbarButton
-            val hotbarItem = player.inventory.getItem(hotbarSlot)
-            val meta = hotbarItem?.itemMeta
-            if (meta?.persistentDataContainer?.get(blockedKey, PersistentDataType.BOOLEAN) == true) {
-                event.isCancelled = true
-                return
-            }
-        } else {
-            val meta = clickedItem?.itemMeta
-            if (meta?.persistentDataContainer?.get(blockedKey, PersistentDataType.BOOLEAN) == true) {
-                event.isCancelled = true
-                return
-            }
+        // Block blocked items
+        if (isBlocked(clickedItem)) {
+            event.isCancelled = true
+            return
         }
 
-        if (clickedInventory.type == InventoryType.PLAYER)
-            return handlePlayerInventoryClick(event, gui, clickedItem)
+        // handle the clicked inventory within the Player inventory
+        if (handlePlayerInventoryClick(event, gui, clickedItem))
+            return
 
-        handleGuiSlotClick(event, gui, clickedSlot, clickedItem)
-        if (event.isCancelled) return
+        // handle the clicked slot within the GUI inventory
+        if(handleGuiSlotClick(event, gui, clickedSlot, clickedItem))
+            return
 
         GUISync.slotSync(gui, clickedSlot)
     }
 
-    private fun handlePlayerInventoryClick(event: InventoryClickEvent, gui: GUI, clickedItem: ItemStack?) {
-        val player = event.whoClicked as? Player ?: return
+    private fun isBlocked(item: ItemStack?): Boolean {
+        if (item == null || item.type == Material.AIR) return false
+        val itemMeta = item.itemMeta ?: return false
+        return itemMeta.persistentDataContainer.get(blockedKey, PersistentDataType.BOOLEAN) == true
+    }
 
-        gui.onPlayerInventoryClick?.invoke(event)
+    /**
+     * Handles clicks on the Player inventory.
+     * Returns true if the event was handled and should not be processed further.
+     */
+    private fun handlePlayerInventoryClick(event: InventoryClickEvent, gui: GUI, clickedItem: ItemStack?): Boolean {
+        if (event.clickedInventory!!.type != InventoryType.PLAYER) return false
 
-        if (gui.shiftProtection == SHIFT_PROTECTION.BLOCK) event.isCancelled = true
-        if (event.isCancelled || gui.shiftProtection == SHIFT_PROTECTION.NONE) return
+        val player = event.whoClicked as? Player ?: return true
+
+        if (gui.shiftProtection == SHIFT_PROTECTION.BLOCK){
+            event.isCancelled = true
+            return true
+        }
+        if (gui.shiftProtection == SHIFT_PROTECTION.NONE)
+            return true
+
+        // Need to check for shift, because the slots might not be putable
         if (event.isShiftClick && gui.shiftProtection == SHIFT_PROTECTION.SMART) {
             event.isCancelled = true
             if (clickedItem != null && clickedItem.type != Material.AIR)
                 handleShiftClick(player, gui, event.slot, clickedItem)
         }
-    }
 
-    private fun handleGuiSlotClick(event: InventoryClickEvent, gui: GUI, slot: Int, clickedItem: ItemStack?) {
-        val guiItem = gui.items[slot]
-        val isMovable = guiItem?.isMovable
-        val isPutable = isMovable ?: gui.isPutable
-        val isTakeable = isMovable ?: gui.isTakeable
-
-        guiItem?.onClick?.invoke(event)
-        gui.onClick?.invoke(event)
-
-        if (event.isCancelled) return
-
-        // Handle number key swaps first
-        if (event.click == ClickType.NUMBER_KEY) {
-            if (!isPutable || !isTakeable) {
-                event.isCancelled = true
-                return
-            }
-        }
-
-        // Prevent putting items (cursor -> GUI)
-        if (!isPutable && event.cursor.type != Material.AIR) {
-            event.isCancelled = true
-            return
-        }
-
-        // Prevent taking items (GUI -> cursor)
-        if (!isTakeable && clickedItem?.type != Material.AIR) {
-            event.isCancelled = true
-        }
+        return true
     }
 
     private fun handleShiftClick(player: Player, gui: GUI, playerSlot: Int, clickedItem: ItemStack) {
@@ -172,6 +153,46 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
             player.inventory.setItem(slot, null)
         else
             player.inventory.setItem(slot, clickedItem)
+    }
+
+    /**
+     * Handles clicks on the GUI slots.
+     * Returns true if the event was handled and should not be processed further.
+     */
+    private fun handleGuiSlotClick(event: InventoryClickEvent, gui: GUI, slot: Int, clickedItem: ItemStack?) : Boolean {
+        val guiItem = gui.items[slot]
+        val isMovable = guiItem?.isMovable
+        val isPutable = isMovable ?: gui.isPutable
+        val isTakeable = isMovable ?: gui.isTakeable
+
+        guiItem?.onClick?.invoke(event)
+
+        // Event can be cancelled in invoked methods
+        if (event.isCancelled) return true
+
+        if(event.click.isKeyboardClick){
+            event.isCancelled = true
+            return true
+        }
+
+        // Prevent putting items (cursor -> GUI)
+        if (!isPutable && event.cursor.type != Material.AIR) {
+            event.isCancelled = true
+            return true
+        }
+
+        // Prevent taking items (GUI -> cursor)
+        if (!isTakeable && clickedItem != null && clickedItem.type != Material.AIR) {
+            event.isCancelled = true
+            return true
+        }
+
+        /*
+            No need to check for shift, click already handles it,
+            if item is takeable, client will handle shift by itself
+         */
+
+        return false
     }
 
     @EventHandler

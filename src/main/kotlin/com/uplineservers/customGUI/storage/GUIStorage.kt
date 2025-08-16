@@ -75,9 +75,9 @@ class GUIStorage {
         }
 
         fun saveInventoryToItem(gui: GUI) {
-            val item = gui.dataItem ?: return
             val inventory = gui.inventory ?: return
-            val meta = item.itemMeta ?: return
+            val item = gui.dataItem ?: return
+            val meta = item.itemMeta
 
             val serializedItems = inventory.contents.mapIndexedNotNull { index, itemStack ->
                 if (itemStack != null && itemStack.type != Material.AIR) {

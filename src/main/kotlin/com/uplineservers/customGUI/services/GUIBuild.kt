@@ -1,13 +1,10 @@
 package com.uplineservers.customGUI.services
 
-import com.uplineservers.customGUI.CustomGUI
 import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.storage.GUIStorage
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.NamespacedKey
 import org.bukkit.event.inventory.InventoryType
-import org.bukkit.persistence.PersistentDataType
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -34,13 +31,10 @@ class GUIBuild {
             gui.items.forEach { (slot, item) ->
                 inventory.setItem(slot, item.item)
             }
-            gui.inventory = inventory
 
-            if (gui.dataItem != null){
-                if (gui.removalDelay != 0L)
-                    CustomGUI.instance.logger.warning("[CustomGUI] ALERT: Using both removalDelay > 0 and dataItem in GUI can be glitchy in creative mode!")
+            gui.inventory = inventory
+            if (gui.dataItem != null)
                 GUIStorage.loadStoredInventoryIntoGui(gui)
-            }
 
             GUIStorage.add(gui)
         }
