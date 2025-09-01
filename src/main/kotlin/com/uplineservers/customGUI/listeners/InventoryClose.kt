@@ -15,14 +15,17 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
 
         val gui = GUIStorage.getByInventory(event.inventory)
         if (gui == null) return
-        if (gui.isUpdating) return
 
+        gui.isUpdating = true
         gui.onClose?.invoke(event)
 
         if (gui.dataItem != null && gui.inventory != null)
             GUIStorage.saveInventoryToItem(gui)
 
         GUIStorage.removePlayer(player)
+
+        gui.isUpdating = false
+
         if (GUIStorage.findPlayers(gui.id).isEmpty()) {
             if (gui.removalDelay > 0)
                 GUIStorage.scheduleRemoval(gui, plugin)

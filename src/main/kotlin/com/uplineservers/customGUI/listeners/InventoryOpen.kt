@@ -12,8 +12,8 @@ class InventoryOpen(plugin: JavaPlugin) : Listener {
     @EventHandler()
     fun onInventoryOpen(event: InventoryOpenEvent) {
         val player = event.player as? Player ?: return
-
         val gui = GUIStorage.getByInventory(event.inventory)
+
         if (gui == null)  return
         if (gui.isUpdating) return
 
