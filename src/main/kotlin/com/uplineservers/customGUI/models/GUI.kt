@@ -1,6 +1,10 @@
 package com.uplineservers.customGUI.models
 
+import com.uplineservers.customGUI.CustomGUI
 import com.uplineservers.customGUI.services.GUIBuild
+import com.uplineservers.customGUI.storage.GUIStorage
+import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
@@ -31,6 +35,7 @@ class GUI(
 
     var inventory: Inventory? = null,
     var dataItem: ItemStack? = null,
+    var dataEntity: Entity? = null,
 
     // Timeout for deleing the gui
     var removalTask: BukkitTask? = null,
@@ -52,4 +57,10 @@ class GUI(
                 GUIBuild.update(this)
             }
         }
+
+    fun open(player: Player) {
+        if(this.inventory == null)
+            throw IllegalStateException("GUI inventory is null for id: $id")
+        player.openInventory(this.inventory!!)
+    }
 }

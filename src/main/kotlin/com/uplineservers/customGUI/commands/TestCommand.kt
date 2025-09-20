@@ -1,9 +1,10 @@
 package com.uplineservers.customGUI.commands
 
+import com.uplineservers.customGUI.CustomGUI
 import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.models.GUIItem
 import com.uplineservers.customGUI.services.GUIBuild
-import com.uplineservers.customGUI.services.GUIOpen
+import com.uplineservers.customGUI.storage.GUIStorage
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.command.Command
@@ -38,7 +39,8 @@ class TestCommand : CommandExecutor {
     }
 
     private fun openMainMenu(player: Player) {
-        if (GUIOpen.openIfExists(player, "test_menu")) return
+        val existing = GUIStorage.getById( "test_menu")
+        if (existing != null) return existing.open(player)
 
         val gui = GUI(id = "test_menu", title = "§6§lMain Menu", size = 27)
 
@@ -68,7 +70,8 @@ class TestCommand : CommandExecutor {
     }
 
     private fun openPutableGUI(player: Player) {
-        if (GUIOpen.openIfExists(player, "placeable_gui")) return
+        val existing = GUIStorage.getById( "placeable_gui")
+        if (existing != null) return existing.open(player)
 
         val gui = GUI(
             id = "placeable_gui",
@@ -83,7 +86,8 @@ class TestCommand : CommandExecutor {
     }
 
     private fun openTakeableGUI(player: Player) {
-        if (GUIOpen.openIfExists(player, "takeable_gui")) return
+        val existing = GUIStorage.getById( "takeable_gui")
+        if (existing != null) return existing.open(player)
 
         val gui = GUI(
             id = "takeable_gui",
@@ -105,7 +109,8 @@ class TestCommand : CommandExecutor {
     }
 
     private fun openMoveableGUI(player: Player) {
-        if (GUIOpen.openIfExists(player, "movable_gui")) return
+        val existing = GUIStorage.getById( "movable_gui")
+        if (existing != null) return existing.open(player)
 
         val gui = GUI(
             id = "movable_gui",
@@ -124,7 +129,8 @@ class TestCommand : CommandExecutor {
 
 
     private fun openActionGUI(player: Player) {
-        if (GUIOpen.openIfExists(player, "action_gui")) return
+        val existing = GUIStorage.getById( "action_gui")
+        if (existing != null) return existing.open(player)
 
         val gui = GUI(
             id = "action_gui",
@@ -143,7 +149,8 @@ class TestCommand : CommandExecutor {
     }
 
     private fun openItemSavedGUI(player: Player) {
-        if (GUIOpen.openIfExists(player, "item_saved_gui")) return
+        val existing = GUIStorage.getById( "item_saved_gui")
+        if (existing != null) return existing.open(player)
 
         val playerHand = player.inventory.itemInMainHand
         if(playerHand.type == Material.AIR) {

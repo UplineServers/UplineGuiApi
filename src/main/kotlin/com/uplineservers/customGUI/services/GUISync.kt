@@ -7,8 +7,7 @@ class GUISync {
     companion object {
         fun fullSync(gui: GUI) {
             val players = GUIStorage.findPlayers(gui.id)
-
-            if (gui.inventory == null || players.size < 2) return
+            if (gui.inventory == null || players.isEmpty()) return
 
             gui.isUpdating = true
             for (player in players) {

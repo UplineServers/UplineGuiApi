@@ -27,14 +27,17 @@ class GUIBuild {
         }
 
         fun build(gui: GUI) {
+            if(GUIStorage.getById(gui.id) != null)
+                throw IllegalArgumentException("GUI with id ${gui.id} already exists")
+
             val inventory = createInventory(gui)
             gui.items.forEach { (slot, item) ->
                 inventory.setItem(slot, item.item)
             }
 
             gui.inventory = inventory
-            if (gui.dataItem != null)
-                GUIStorage.loadStoredInventoryIntoGui(gui)
+            if (gui.dataItem != null || gui.dataEntity != null)
+                GUIStorage.loadStoredInventory(gui)
 
             GUIStorage.add(gui)
         }

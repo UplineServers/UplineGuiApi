@@ -74,10 +74,8 @@ class GUIStorage {
             }
         }
 
-        fun saveInventoryToItem(gui: GUI) {
+        fun saveInventory(gui: GUI) {
             val inventory = gui.inventory ?: return
-            val item = gui.dataItem ?: return
-            val meta = item.itemMeta
 
             val serializedItems = inventory.contents.mapIndexedNotNull { index, itemStack ->
                 if (itemStack != null && itemStack.type != Material.AIR) {
@@ -91,19 +89,41 @@ class GUIStorage {
             val json = GsonBuilder().create().toJson(serializedItems)
 
             if (json.length > 32767) {
-                CustomGUI.instance.logger.warning("NBT data too large to save to item!")
+                CustomGUI.instance.logger.warning("NBT data too large to save!")
                 return
             }
 
-            meta.persistentDataContainer.set(key, PersistentDataType.STRING, json)
-            item.itemMeta = meta
+            when {
+                gui.dataItem != null -> {
+                    val item = gui.dataItem!!
+                    val meta = item.itemMeta ?: return
+                    meta.persistentDataContainer.set(key, PersistentDataType.STRING, json)
+                    item.itemMeta = meta
+                }
+                gui.dataEntity != null -> {
+                    val entity = gui.dataEntity!!
+                    entity.persistentDataContainer.set(key, PersistentDataType.STRING, json)
+                    gui.dataEntity = entity
+                }
+                else -> return
+            }
         }
 
-        fun loadStoredInventoryIntoGui(gui: GUI) {
-            val item = gui.dataItem ?: return
+        fun loadStoredInventory(gui: GUI) {
             val inventory = gui.inventory ?: return
-            val meta = item.itemMeta ?: return
-            val json = meta.persistentDataContainer.get(key, PersistentDataType.STRING) ?: return
+            val json: String = when {
+                gui.dataItem != null -> {
+                    val meta = gui.dataItem!!.itemMeta ?: return
+                    meta.persistentDataContainer.get(key, PersistentDataType.STRING)
+                }
+                gui.dataEntity != null -> {
+                    val entity = gui.dataEntity ?: return
+                    entity.persistentDataContainer.get(key, PersistentDataType.STRING)
+                }
+                else -> return
+            } ?: return
+
+            CustomGUI.instance.logger.info("Loading stored inventory for GUI ${gui.id}")
 
             val type = object : TypeToken<List<Map<String, Any>>>() {}.type
             val savedList: List<Map<String, Any>> = gson.fromJson(json, type)

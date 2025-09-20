@@ -1,5 +1,6 @@
 package com.uplineservers.customGUI.listeners
 
+import com.uplineservers.customGUI.CustomGUI
 import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.models.SHIFT_PROTECTION
 import com.uplineservers.customGUI.services.GUISync
@@ -26,6 +27,12 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
         val clickedItem = event.currentItem
         val clickedInventory = event.clickedInventory
 
+        // cancel if clicked the data item
+        if(gui.dataItem != null && clickedItem == gui.dataItem){
+            event.isCancelled = true
+            return
+        }
+
         gui.onClick?.invoke(event)
         if (event.isCancelled) return
 
@@ -48,12 +55,14 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
         }
 
         // handle the clicked inventory within the Player inventory
-        if (handlePlayerInventoryClick(event, gui, clickedItem))
+        if (handlePlayerInventoryClick(event, gui, clickedItem)){
             return
+        }
 
         // handle the clicked slot within the GUI inventory
-        if(handleGuiSlotClick(event, gui, clickedSlot, clickedItem))
+        if(handleGuiSlotClick(event, gui, clickedSlot, clickedItem)){
             return
+        }
 
         GUISync.slotSync(gui, clickedSlot)
     }
@@ -73,18 +82,19 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
 
         val player = event.whoClicked as? Player ?: return true
 
-        if (gui.shiftProtection == SHIFT_PROTECTION.BLOCK){
-            event.isCancelled = true
-            return true
-        }
-        if (gui.shiftProtection == SHIFT_PROTECTION.NONE)
-            return true
-
         // Need to check for shift, because the slots might not be putable
-        if (event.isShiftClick && gui.shiftProtection == SHIFT_PROTECTION.SMART) {
-            event.isCancelled = true
-            if (clickedItem != null && clickedItem.type != Material.AIR)
-                handleShiftClick(player, gui, event.slot, clickedItem)
+        if (event.isShiftClick) {
+            if (gui.shiftProtection == SHIFT_PROTECTION.SMART) {
+                event.isCancelled = true
+                if (clickedItem != null && clickedItem.type != Material.AIR)
+                    handleShiftClick(player, gui, event.slot, clickedItem)
+            } else if (gui.shiftProtection == SHIFT_PROTECTION.BLOCK) {
+                event.isCancelled = true
+                return true
+            } else if (gui.shiftProtection == SHIFT_PROTECTION.NONE) {
+                GUISync.fullSync(gui)
+                return true
+            }
         }
 
         return true
@@ -160,17 +170,17 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
      * Returns true if the event was handled and should not be processed further.
      */
     private fun handleGuiSlotClick(event: InventoryClickEvent, gui: GUI, slot: Int, clickedItem: ItemStack?) : Boolean {
+        if (slot < 0 || slot >= event.inventory.size) return false
+
         val guiItem = gui.items[slot]
         val isMovable = guiItem?.isMovable
         val isPutable = isMovable ?: gui.isPutable
         val isTakeable = isMovable ?: gui.isTakeable
 
         guiItem?.onClick?.invoke(event)
-
-        // Event can be cancelled in invoked methods
         if (event.isCancelled) return true
 
-        if(event.click.isKeyboardClick){
+        if (event.click.isKeyboardClick){
             event.isCancelled = true
             return true
         }

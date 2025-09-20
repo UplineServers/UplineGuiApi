@@ -19,8 +19,8 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
         gui.isUpdating = true
         gui.onClose?.invoke(event)
 
-        if (gui.dataItem != null && gui.inventory != null)
-            GUIStorage.saveInventoryToItem(gui)
+        if ((gui.dataItem != null || gui.dataEntity != null) && gui.inventory != null)
+            GUIStorage.saveInventory(gui)
 
         GUIStorage.removePlayer(player)
 

@@ -2,7 +2,9 @@ package com.uplineservers.customGUI
 
 import com.uplineservers.customGUI.commands.CommandRegisterer
 import com.uplineservers.customGUI.listeners.ListenerRegisterer
+import com.uplineservers.customGUI.services.GUIBuild
 import com.uplineservers.customGUI.storage.GUIStorage
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 class CustomGUI : JavaPlugin() {
@@ -29,9 +31,10 @@ class CustomGUI : JavaPlugin() {
         logger.info("Disabling CustomGUI plugin...")
 
         GUIStorage.guis.values.forEach { gui ->
-            if (gui.dataItem != null && gui.inventory != null) {
-                GUIStorage.saveInventoryToItem(gui)
+            if ((gui.dataItem != null || gui.dataEntity != null) && gui.inventory != null) {
+                GUIStorage.saveInventory(gui)
             }
         }
     }
+
 }
