@@ -17,7 +17,6 @@ import java.util.*
 enum class SHIFT_PROTECTION {
     NONE,
     BLOCK,
-    SMART,
 }
 
 class GUI(
@@ -31,7 +30,7 @@ class GUI(
     val isPutable: Boolean = false,
     val isTakeable: Boolean = false,
     var isUpdating: Boolean = false,
-    val shiftProtection: SHIFT_PROTECTION = SHIFT_PROTECTION.SMART,
+    val shiftProtection: SHIFT_PROTECTION = SHIFT_PROTECTION.NONE,
 
     var inventory: Inventory? = null,
     var dataItem: ItemStack? = null,
@@ -45,6 +44,9 @@ class GUI(
     var onOpen: ((InventoryOpenEvent) -> Unit)? = null,
     var onClose: ((InventoryCloseEvent) -> Unit)? = null,
     var onClick: ((InventoryClickEvent) -> Unit)? = null,
+
+    var onCreate: ((gui: GUI) -> Unit)? = null,
+    var onDestroy: ((gui: GUI) -> Unit)? = null,
 ) {
 
     private var _title: String = title

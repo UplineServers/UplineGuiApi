@@ -36,6 +36,7 @@ class GUIStorage {
         }
 
         fun add(gui: GUI) {
+            gui.onCreate?.invoke(gui)
             guis[gui.id] = gui
         }
 
@@ -66,6 +67,7 @@ class GUIStorage {
         }
 
         fun remove(gui: GUI) {
+            gui.onDestroy?.invoke(gui)
             guis.remove(gui.id)
 
             // close all inventories of players using this GUI

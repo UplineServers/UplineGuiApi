@@ -78,8 +78,8 @@ class TestCommand : CommandExecutor {
             title = "§aPlaceable GUI",
             size = 9,
             isPutable = true,
-            isTakeable = false
         )
+
         gui.onOpen = { it.player.sendMessage("§aYou can place items here, but not take them out.") }
         GUIBuild.build(gui)
         player.openInventory(gui.inventory!!)
@@ -93,7 +93,6 @@ class TestCommand : CommandExecutor {
             id = "takeable_gui",
             title = "§aTakeable GUI",
             size = 9,
-            isPutable = false,
             isTakeable = true
         )
 
