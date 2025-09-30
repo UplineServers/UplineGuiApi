@@ -2,7 +2,7 @@ package com.uplineservers.customgui.listeners
 
 import com.uplineservers.customgui.models.Gui
 import com.uplineservers.customgui.models.SHIFT_PROTECTION
-import com.uplineservers.customgui.services.GuiStorage
+import com.uplineservers.customgui.services.GuiManager
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -19,7 +19,7 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
-        val gui = GuiStorage.getByPlayer(player) ?: return
+        val gui = GuiManager.getByPlayer(player) ?: return
 
         val clickedItem = event.currentItem
         val clickedInventory = event.clickedInventory
@@ -28,7 +28,7 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
 
         val isClickedDataItem = gui.dataItem != null && clickedItem == gui.dataItem
         val isKeyboardDataItem = event.click.isKeyboardClick &&
-                hotbarSlot in 0..8 && // <-- add this check
+                hotbarSlot in 0..8 &&
                 gui.dataItem != null &&
                 player.inventory.getItem(hotbarSlot) == gui.dataItem
 
@@ -37,14 +37,14 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
             return
         }
 
-        gui.onClick?.invoke(event)
-        if (event.isCancelled) return
-
         // If updating, just block everything to avoid glitches
         if (gui.isUpdating) {
             event.isCancelled = true
             return
         }
+
+        gui.onClick?.invoke(event)
+        if (event.isCancelled) return
 
         // Check if the clicked inventory is within the Inventory
         if (clickedInventory == null || clickedSlot < 0){
@@ -142,21 +142,5 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
         }
 
         return false
-    }
-
-    @EventHandler
-    fun onInventoryDrag(event: InventoryDragEvent) {
-        val player = event.whoClicked as? Player ?: return
-        val gui = GuiStorage.getByPlayer(player) ?: return
-
-        for (slot in event.rawSlots) {
-            if (slot < gui.size) {
-                val guiItem = gui.items[slot]
-                if (!(guiItem?.isMovable ?: gui.isPutable)) {
-                    event.isCancelled = true
-                    return
-                }
-            }
-        }
     }
 }

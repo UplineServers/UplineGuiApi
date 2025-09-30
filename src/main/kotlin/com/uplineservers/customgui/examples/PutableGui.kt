@@ -1,12 +1,11 @@
 package com.uplineservers.customgui.examples
 
 import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.services.GuiBuild
-import com.uplineservers.customgui.services.GuiStorage
+import com.uplineservers.customgui.services.GuiManager
 import org.bukkit.entity.Player
 
 fun PutableGui(player: Player) {
-    val existing = GuiStorage.getById("placeable_gui")
+    val existing = GuiManager.getById("placeable_gui")
     if (existing != null) return existing.open(player)
 
     val gui = Gui(
@@ -17,6 +16,7 @@ fun PutableGui(player: Player) {
     )
 
     gui.onOpen = { it.player.sendMessage("§aYou can place items here, but not take them out.") }
-    GuiBuild.build(gui)
-    player.openInventory(gui.inventory!!)
+
+    gui.build()
+    gui.open(player)
 }

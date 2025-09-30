@@ -1,13 +1,12 @@
 package com.uplineservers.customgui.examples
 
 import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.services.GuiBuild
-import com.uplineservers.customgui.services.GuiStorage
+import com.uplineservers.customgui.services.GuiManager
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
 fun ItemSavedGui(player: Player) {
-    val existing = GuiStorage.getById( "item_saved_gui")
+    val existing = GuiManager.getById( "item_saved_gui")
     if (existing != null) return existing.open(player)
 
     val playerHand = player.inventory.itemInMainHand
@@ -25,6 +24,6 @@ fun ItemSavedGui(player: Player) {
         dataItem = playerHand
     )
 
-    GuiBuild.build(gui)
-    player.openInventory(gui.inventory!!)
+    gui.build()
+    gui.open(player)
 }

@@ -1,5 +1,6 @@
 package com.uplineservers.customgui.commands
 
+import com.uplineservers.customgui.examples.InventoryMenu
 import com.uplineservers.customgui.examples.ItemSavedGui
 import com.uplineservers.customgui.examples.MenuExampleGui
 import com.uplineservers.customgui.examples.MoveableGui
@@ -10,7 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class TestCommand : SubCommand{
-    private val options = listOf("menu", "putable", "takeable", "moveable", "action", "item")
+    private val options = listOf("menu", "putable", "takeable", "moveable", "item", "inventory")
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
@@ -29,6 +30,7 @@ class TestCommand : SubCommand{
             "takeable" -> TakeableGui(sender)
             "moveable" -> MoveableGui(sender)
             "item" -> ItemSavedGui(sender)
+            "inventory" -> InventoryMenu(sender)
             else -> sender.sendMessage("§cUnknown test GUI: ${args[0]}")
         }
 

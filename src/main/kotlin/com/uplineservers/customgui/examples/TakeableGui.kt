@@ -1,14 +1,13 @@
 package com.uplineservers.customgui.examples
 
 import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.services.GuiBuild
-import com.uplineservers.customgui.services.GuiStorage
+import com.uplineservers.customgui.services.GuiManager
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 fun TakeableGui(player: Player) {
-    val existing = GuiStorage.getById("takeable_gui")
+    val existing = GuiManager.getById("takeable_gui")
     if (existing != null) return existing.open(player)
 
     val gui = Gui(
@@ -18,13 +17,13 @@ fun TakeableGui(player: Player) {
         isTakeable = true
     )
 
-    gui.onOpen = { it.player.sendMessage("§aYou can place items here, but not take them out.") }
-    GuiBuild.build(gui)
-
-    // need to fill the inventory, not add guiItems, because guiItems are functional, and require isMovable to be false or true
-    for (i in 0 until gui.size) {
-        gui.inventory?.setItem(i, ItemStack(Material.GOLD_INGOT))
+    gui.onOpen = {
+        for (i in 0 until gui.size) {
+            gui.inventory?.setItem(i, ItemStack(Material.GOLD_INGOT))
+        }
+        it.player.sendMessage("§aYou can place items here, but not take them out.")
     }
 
-    player.openInventory(gui.inventory!!)
+    gui.build()
+    gui.open(player)
 }

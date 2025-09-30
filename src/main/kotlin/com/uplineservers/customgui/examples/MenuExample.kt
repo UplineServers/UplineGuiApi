@@ -2,8 +2,7 @@ package com.uplineservers.customgui.examples
 
 import com.uplineservers.customgui.models.Gui
 import com.uplineservers.customgui.models.GuiItem
-import com.uplineservers.customgui.services.GuiBuild
-import com.uplineservers.customgui.services.GuiStorage
+import com.uplineservers.customgui.services.GuiManager
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -11,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 import kotlin.collections.set
 
 fun MenuExampleGui(player: Player) {
-    val existing = GuiStorage.getById("test_menu")
+    val existing = GuiManager.getById("test_menu")
     if (existing != null) return existing.open(player)
 
     val gui = Gui(id = "test_menu", title = "§6§lMain Menu", size = 27)
@@ -42,7 +41,6 @@ fun MenuExampleGui(player: Player) {
     gui.onOpen = { it.player.sendMessage("§7Welcome to the main menu!") }
     gui.onClose = { it.player.sendMessage("§7Thanks for using the main menu!") }
 
-    GuiBuild.build(gui)
-
-    player.openInventory(gui.inventory!!)
+    gui.build()
+    gui.open(player)
 }
