@@ -1,4 +1,4 @@
-package com.uplineservers.customGUI.commands
+package com.uplineservers.customgui.commands
 
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

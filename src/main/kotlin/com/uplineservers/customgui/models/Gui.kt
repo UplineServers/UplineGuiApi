@@ -1,8 +1,6 @@
-package com.uplineservers.customGUI.models
+package com.uplineservers.customgui.models
 
-import com.uplineservers.customGUI.CustomGUI
-import com.uplineservers.customGUI.services.GUIBuild
-import com.uplineservers.customGUI.services.GUIStorage
+import com.uplineservers.customgui.services.GuiBuild
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -19,13 +17,13 @@ enum class SHIFT_PROTECTION {
     BLOCK,
 }
 
-class GUI(
+class Gui(
     var id: String = UUID.randomUUID().toString(),
     var type: InventoryType? = null,
     title: String = "Custom GUI",
 
     val size: Int = 27,
-    val items: MutableMap<Int, GUIItem> = mutableMapOf(),
+    val items: MutableMap<Int, GuiItem> = mutableMapOf(),
 
     val isPutable: Boolean = false,
     val isTakeable: Boolean = false,
@@ -45,8 +43,8 @@ class GUI(
     var onClose: ((InventoryCloseEvent) -> Unit)? = null,
     var onClick: ((InventoryClickEvent) -> Unit)? = null,
 
-    var onCreate: ((gui: GUI) -> Unit)? = null,
-    var onDestroy: ((gui: GUI) -> Unit)? = null,
+    var onCreate: ((gui: Gui) -> Unit)? = null,
+    var onDestroy: ((gui: Gui) -> Unit)? = null,
 ) {
 
     private var _title: String = title
@@ -56,7 +54,7 @@ class GUI(
         set(value) {
             if (_title != value) {
                 _title = value
-                GUIBuild.update(this)
+                GuiBuild.update(this)
             }
         }
 
@@ -67,6 +65,6 @@ class GUI(
     }
 
     fun build(){
-        GUIBuild.build(this)
+        GuiBuild.build(this)
     }
 }

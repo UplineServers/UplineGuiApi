@@ -1,8 +1,8 @@
-package com.uplineservers.customGUI.listeners
+package com.uplineservers.customgui.listeners
 
-import com.uplineservers.customGUI.models.GUI
-import com.uplineservers.customGUI.models.SHIFT_PROTECTION
-import com.uplineservers.customGUI.services.GUIStorage
+import com.uplineservers.customgui.models.Gui
+import com.uplineservers.customgui.models.SHIFT_PROTECTION
+import com.uplineservers.customgui.services.GuiStorage
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -19,7 +19,7 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
-        val gui = GUIStorage.getByPlayer(player) ?: return
+        val gui = GuiStorage.getByPlayer(player) ?: return
 
         val clickedItem = event.currentItem
         val clickedInventory = event.clickedInventory
@@ -84,7 +84,7 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
      * Handles clicks on the Player inventory.
      * Returns true if the event was handled and should not be processed further.
      */
-    private fun handlePlayerInventoryClick(event: InventoryClickEvent, gui: GUI): Boolean {
+    private fun handlePlayerInventoryClick(event: InventoryClickEvent, gui: Gui): Boolean {
         if (event.clickedInventory!!.type != InventoryType.PLAYER) return false
 
         // Need to check for shift, because the slots might not be putable
@@ -100,7 +100,7 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
      * Handles clicks on the GUI slots.
      * Returns true if the event was handled and should not be processed further.
      */
-    private fun handleGuiSlotClick(event: InventoryClickEvent, gui: GUI) : Boolean {
+    private fun handleGuiSlotClick(event: InventoryClickEvent, gui: Gui) : Boolean {
         val slot = event.rawSlot
         if (slot < 0 || slot >= event.inventory.size) return false
 
@@ -147,7 +147,7 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
     @EventHandler
     fun onInventoryDrag(event: InventoryDragEvent) {
         val player = event.whoClicked as? Player ?: return
-        val gui = GUIStorage.getByPlayer(player) ?: return
+        val gui = GuiStorage.getByPlayer(player) ?: return
 
         for (slot in event.rawSlots) {
             if (slot < gui.size) {

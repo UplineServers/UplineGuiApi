@@ -1,10 +1,10 @@
-package com.uplineservers.customGUI.services
+package com.uplineservers.customgui.services
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.uplineservers.customGUI.CustomGUI
-import com.uplineservers.customGUI.models.GUI
+import com.uplineservers.customgui.CustomGui
+import com.uplineservers.customgui.models.Gui
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -14,28 +14,28 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 
-class GUIStorage {
+class GuiStorage {
     companion object {
         private val gson = Gson()
-        private val key = NamespacedKey(CustomGUI.Companion.instance, "stored_inventory")
+        private val key = NamespacedKey(CustomGui.Companion.instance, "stored_inventory")
 
-        val guis: MutableMap<String, GUI> = mutableMapOf()
+        val guis: MutableMap<String, Gui> = mutableMapOf()
         val playersGUI: MutableMap<Player, String> = mutableMapOf()
 
-        fun getById(id: String): GUI? {
+        fun getById(id: String): Gui? {
             return guis[id]
         }
 
-        fun getByPlayer(player: Player): GUI? {
+        fun getByPlayer(player: Player): Gui? {
             val guiId = playersGUI[player] ?: return null
             return guis[guiId]
         }
 
-        fun getByInventory(inventory: Inventory): GUI? {
+        fun getByInventory(inventory: Inventory): Gui? {
             return guis.values.find { it.inventory == inventory }
         }
 
-        fun add(gui: GUI) {
+        fun add(gui: Gui) {
             gui.onCreate?.invoke(gui)
             guis[gui.id] = gui
         }
@@ -52,7 +52,7 @@ class GUIStorage {
             playersGUI.remove(player) ?: return
         }
 
-        fun scheduleRemoval(gui: GUI, plugin: JavaPlugin) {
+        fun scheduleRemoval(gui: Gui, plugin: JavaPlugin) {
             gui.removalTask?.cancel()
 
             gui.removalTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
@@ -61,12 +61,12 @@ class GUIStorage {
             }, gui.removalDelay * 20L)
         }
 
-        fun cancelRemoval(gui: GUI) {
+        fun cancelRemoval(gui: Gui) {
             gui.removalTask?.cancel()
             gui.removalTask = null
         }
 
-        fun remove(gui: GUI) {
+        fun remove(gui: Gui) {
             gui.onDestroy?.invoke(gui)
             guis.remove(gui.id)
 
@@ -76,7 +76,7 @@ class GUIStorage {
             }
         }
 
-        fun saveInventory(gui: GUI) {
+        fun saveInventory(gui: Gui) {
             val inventory = gui.inventory ?: return
 
             val serializedItems = inventory.contents.mapIndexedNotNull { index, itemStack ->
@@ -91,7 +91,7 @@ class GUIStorage {
             val json = GsonBuilder().create().toJson(serializedItems)
 
             if (json.length > 32767) {
-                CustomGUI.Companion.instance.logger.warning("NBT data too large to save!")
+                CustomGui.Companion.instance.logger.warning("NBT data too large to save!")
                 return
             }
 
@@ -111,7 +111,7 @@ class GUIStorage {
             }
         }
 
-        fun loadStoredInventory(gui: GUI) {
+        fun loadStoredInventory(gui: Gui) {
             val inventory = gui.inventory ?: return
             val json: String = when {
                 gui.dataItem != null -> {
@@ -125,7 +125,7 @@ class GUIStorage {
                 else -> return
             } ?: return
 
-            CustomGUI.Companion.instance.logger.info("Loading stored inventory for GUI ${gui.id}")
+            CustomGui.Companion.instance.logger.info("Loading stored inventory for GUI ${gui.id}")
 
             val type = object : TypeToken<List<Map<String, Any>>>() {}.type
             val savedList: List<Map<String, Any>> = gson.fromJson(json, type)

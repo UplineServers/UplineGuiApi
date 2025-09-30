@@ -1,14 +1,14 @@
-package com.uplineservers.customGUI
+package com.uplineservers.customgui
 
-import com.uplineservers.customGUI.commands.CommandRegisterer
-import com.uplineservers.customGUI.listeners.ListenerRegisterer
-import com.uplineservers.customGUI.services.GUIStorage
+import com.uplineservers.customgui.commands.CommandRegisterer
+import com.uplineservers.customgui.listeners.ListenerRegisterer
+import com.uplineservers.customgui.services.GuiStorage
 import org.bukkit.plugin.java.JavaPlugin
 
-class CustomGUI : JavaPlugin() {
+class CustomGui : JavaPlugin() {
 
     companion object {
-        lateinit var instance: CustomGUI
+        lateinit var instance: CustomGui
             private set
     }
 
@@ -28,9 +28,9 @@ class CustomGUI : JavaPlugin() {
     override fun onDisable() {
         logger.info("Disabling CustomGUI plugin...")
 
-        GUIStorage.guis.values.forEach { gui ->
+        GuiStorage.guis.values.forEach { gui ->
             if ((gui.dataItem != null || gui.dataEntity != null) && gui.inventory != null) {
-                GUIStorage.saveInventory(gui)
+                GuiStorage.saveInventory(gui)
             }
         }
     }

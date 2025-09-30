@@ -1,6 +1,6 @@
-package com.uplineservers.customGUI.listeners
+package com.uplineservers.customgui.listeners
 
-import com.uplineservers.customGUI.services.GUIStorage
+import com.uplineservers.customgui.services.GuiStorage
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -12,13 +12,13 @@ class InventoryOpen(plugin: JavaPlugin) : Listener {
     @EventHandler()
     fun onInventoryOpen(event: InventoryOpenEvent) {
         val player = event.player as? Player ?: return
-        val gui = GUIStorage.getByInventory(event.inventory)
+        val gui = GuiStorage.getByInventory(event.inventory)
 
         if (gui == null)  return
         if (gui.isUpdating) return
 
-        GUIStorage.cancelRemoval(gui)
-        GUIStorage.addPlayer(gui.id, player)
+        GuiStorage.cancelRemoval(gui)
+        GuiStorage.addPlayer(gui.id, player)
 
         if (gui.onOpen != null)
             gui.onOpen!!.invoke(event)

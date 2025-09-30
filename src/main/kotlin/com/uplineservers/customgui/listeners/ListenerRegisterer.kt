@@ -1,4 +1,4 @@
-package com.uplineservers.customGUI.listeners
+package com.uplineservers.customgui.listeners
 
 import org.bukkit.plugin.java.JavaPlugin
 

@@ -1,6 +1,6 @@
-name: CustomGUI
+name: CustomGui
 version: '1.2'
-main: com.uplineservers.customGUI.CustomGUI
+main: com.uplineservers.customgui.CustomGui
 api-version: '1.21'
 authors: [ Emanuel Scura ]
 website: https://emanuelscura.me
@@ -10,7 +10,7 @@ depend: [ktlibs-kotlin-stdlib]
 
 commands:
   customgui:
-    description: Main command for CustomGUI plugin
+    description: Main command for CustomGui plugin
     usage: /<command> <test|info> [option]
     permission: customgui.use
     permission-message: You do not have permission to use this command

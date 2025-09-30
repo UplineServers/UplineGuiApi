@@ -1,10 +1,10 @@
-package com.uplineservers.customGUI.commands
+package com.uplineservers.customgui.commands
 
-import com.uplineservers.customGUI.examples.ItemSavedGui
-import com.uplineservers.customGUI.examples.MenuExampleGui
-import com.uplineservers.customGUI.examples.MoveableGui
-import com.uplineservers.customGUI.examples.PutableGui
-import com.uplineservers.customGUI.examples.TakeableGui
+import com.uplineservers.customgui.examples.ItemSavedGui
+import com.uplineservers.customgui.examples.MenuExampleGui
+import com.uplineservers.customgui.examples.MoveableGui
+import com.uplineservers.customgui.examples.PutableGui
+import com.uplineservers.customgui.examples.TakeableGui
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player

@@ -1,6 +1,6 @@
-package com.uplineservers.customGUI.listeners
+package com.uplineservers.customgui.listeners
 
-import com.uplineservers.customGUI.services.GUIStorage
+import com.uplineservers.customgui.services.GuiStorage
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,24 +13,24 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
     fun onInventoryClose(event: InventoryCloseEvent) {
         val player = event.player as? Player ?: return
 
-        val gui = GUIStorage.getByInventory(event.inventory)
+        val gui = GuiStorage.getByInventory(event.inventory)
         if (gui == null) return
 
         gui.isUpdating = true
         gui.onClose?.invoke(event)
 
         if ((gui.dataItem != null || gui.dataEntity != null) && gui.inventory != null)
-            GUIStorage.saveInventory(gui)
+            GuiStorage.saveInventory(gui)
 
-        GUIStorage.removePlayer(player)
+        GuiStorage.removePlayer(player)
 
         gui.isUpdating = false
 
-        if (GUIStorage.findPlayers(gui.id).isEmpty()) {
+        if (GuiStorage.findPlayers(gui.id).isEmpty()) {
             if (gui.removalDelay > 0)
-                GUIStorage.scheduleRemoval(gui, plugin)
+                GuiStorage.scheduleRemoval(gui, plugin)
             else
-                GUIStorage.remove(gui)
+                GuiStorage.remove(gui)
         }
     }
 }

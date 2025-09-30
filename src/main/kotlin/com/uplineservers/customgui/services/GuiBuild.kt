@@ -1,15 +1,14 @@
-package com.uplineservers.customGUI.services
+package com.uplineservers.customgui.services
 
-import com.uplineservers.customGUI.models.GUI
-import com.uplineservers.customGUI.services.GUIStorage
+import com.uplineservers.customgui.models.Gui
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 
-class GUIBuild {
+class GuiBuild {
     companion object {
-        private fun createInventory(gui: GUI): Inventory {
+        private fun createInventory(gui: Gui): Inventory {
             if (gui.type == null)
                 gui.type = InventoryType.CHEST
 
@@ -25,8 +24,8 @@ class GUIBuild {
             }
         }
 
-        fun build(gui: GUI) {
-            if(GUIStorage.getById(gui.id) != null)
+        fun build(gui: Gui) {
+            if(GuiStorage.getById(gui.id) != null)
                 throw IllegalArgumentException("GUI with id ${gui.id} already exists")
 
             val inventory = createInventory(gui)
@@ -36,12 +35,12 @@ class GUIBuild {
 
             gui.inventory = inventory
             if (gui.dataItem != null || gui.dataEntity != null)
-                GUIStorage.loadStoredInventory(gui)
+                GuiStorage.loadStoredInventory(gui)
 
-            GUIStorage.add(gui)
+            GuiStorage.add(gui)
         }
 
-        fun update(gui: GUI) {
+        fun update(gui: Gui) {
             if (gui.inventory == null) return
             val oldContents = gui.inventory!!.contents.copyOf()
 
@@ -57,7 +56,7 @@ class GUIBuild {
             gui.inventory = inventory
 
             gui.isUpdating = true
-            for (player in GUIStorage.findPlayers(gui.id)) {
+            for (player in GuiStorage.findPlayers(gui.id)) {
                 player.closeInventory()
                 player.openInventory(inventory)
             }
