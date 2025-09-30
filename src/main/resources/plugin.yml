@@ -7,16 +7,10 @@ website: https://emanuelscura.me
 description: Advanced custom GUI API for Minecraft plugins
 
 depend: [ktlibs-kotlin-stdlib]
-softdepend: []
 
 commands:
-  guitest:
-    description: Opens the test GUI
-    usage: /<command> [menu|trash|storage|display|action]
+  customgui:
+    description: Main command for CustomGUI plugin
+    usage: /<command> <test|info> [option]
     permission: customgui.use
-    permission-message: You do not have permission to use this command
-  guiinfo:
-    description: Displays information about the custom GUI plugin
-    usage: /<command>
-    permission: customgui.info
     permission-message: You do not have permission to use this command

@@ -1,16 +1,15 @@
 package com.uplineservers.customGUI.services
 
 import com.uplineservers.customGUI.models.GUI
-import com.uplineservers.customGUI.storage.GUIStorage
+import com.uplineservers.customGUI.services.GUIStorage
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.event.inventory.InventoryType
-import kotlin.collections.component1
-import kotlin.collections.component2
+import org.bukkit.inventory.Inventory
 
 class GUIBuild {
     companion object {
-        private fun createInventory(gui: GUI): org.bukkit.inventory.Inventory {
+        private fun createInventory(gui: GUI): Inventory {
             if (gui.type == null)
                 gui.type = InventoryType.CHEST
 

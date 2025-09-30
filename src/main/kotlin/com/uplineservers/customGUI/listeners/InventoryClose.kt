@@ -1,6 +1,6 @@
 package com.uplineservers.customGUI.listeners
 
-import com.uplineservers.customGUI.storage.GUIStorage
+import com.uplineservers.customGUI.services.GUIStorage
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

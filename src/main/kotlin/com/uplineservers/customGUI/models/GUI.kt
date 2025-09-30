@@ -2,7 +2,7 @@ package com.uplineservers.customGUI.models
 
 import com.uplineservers.customGUI.CustomGUI
 import com.uplineservers.customGUI.services.GUIBuild
-import com.uplineservers.customGUI.storage.GUIStorage
+import com.uplineservers.customGUI.services.GUIStorage
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -20,7 +20,7 @@ enum class SHIFT_PROTECTION {
 }
 
 class GUI(
-    val id: String = UUID.randomUUID().toString(),
+    var id: String = UUID.randomUUID().toString(),
     var type: InventoryType? = null,
     title: String = "Custom GUI",
 
@@ -64,5 +64,9 @@ class GUI(
         if(this.inventory == null)
             throw IllegalStateException("GUI inventory is null for id: $id")
         player.openInventory(this.inventory!!)
+    }
+
+    fun build(){
+        GUIBuild.build(this)
     }
 }

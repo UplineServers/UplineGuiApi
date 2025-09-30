@@ -1,4 +1,4 @@
-package com.uplineservers.customGUI.storage
+package com.uplineservers.customGUI.services
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class GUIStorage {
     companion object {
         private val gson = Gson()
-        private val key = NamespacedKey(CustomGUI.instance, "stored_inventory")
+        private val key = NamespacedKey(CustomGUI.Companion.instance, "stored_inventory")
 
         val guis: MutableMap<String, GUI> = mutableMapOf()
         val playersGUI: MutableMap<Player, String> = mutableMapOf()
@@ -54,7 +54,7 @@ class GUIStorage {
 
         fun scheduleRemoval(gui: GUI, plugin: JavaPlugin) {
             gui.removalTask?.cancel()
-            
+
             gui.removalTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
                 if (findPlayers(gui.id).isEmpty())
                     this.remove(gui)
@@ -91,7 +91,7 @@ class GUIStorage {
             val json = GsonBuilder().create().toJson(serializedItems)
 
             if (json.length > 32767) {
-                CustomGUI.instance.logger.warning("NBT data too large to save!")
+                CustomGUI.Companion.instance.logger.warning("NBT data too large to save!")
                 return
             }
 
@@ -125,7 +125,7 @@ class GUIStorage {
                 else -> return
             } ?: return
 
-            CustomGUI.instance.logger.info("Loading stored inventory for GUI ${gui.id}")
+            CustomGUI.Companion.instance.logger.info("Loading stored inventory for GUI ${gui.id}")
 
             val type = object : TypeToken<List<Map<String, Any>>>() {}.type
             val savedList: List<Map<String, Any>> = gson.fromJson(json, type)

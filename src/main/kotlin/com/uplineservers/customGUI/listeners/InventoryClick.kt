@@ -2,7 +2,7 @@ package com.uplineservers.customGUI.listeners
 
 import com.uplineservers.customGUI.models.GUI
 import com.uplineservers.customGUI.models.SHIFT_PROTECTION
-import com.uplineservers.customGUI.storage.GUIStorage
+import com.uplineservers.customGUI.services.GUIStorage
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
