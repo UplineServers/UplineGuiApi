@@ -17,12 +17,18 @@ enum class SHIFT_PROTECTION {
     BLOCK,
 }
 
+enum class EXTRA_INVENTORY {
+    MAIN,
+    FULL,
+}
+
 class Gui(
     var id: String = UUID.randomUUID().toString(),
-    var type: InventoryType? = null,
+    var type: InventoryType = InventoryType.CHEST,
     title: String = "Custom GUI",
 
     val size: Int = 27,
+    val extraSize: EXTRA_INVENTORY? = null,
     val items: MutableMap<Int, GuiItem> = mutableMapOf(),
 
     val isPutable: Boolean = false,
@@ -33,10 +39,6 @@ class Gui(
     var inventory: Inventory? = null,
     var dataItem: ItemStack? = null,
     var dataEntity: Entity? = null,
-
-    // Timeout for deleing the gui
-    var removalTask: BukkitTask? = null,
-    var removalDelay: Long = 0L,
 
     // Simple event callbacks
     var onOpen: ((InventoryOpenEvent) -> Unit)? = null,

@@ -14,12 +14,12 @@ class InventoryDrag(plugin: Plugin) : Listener {
         val gui = GuiManager.getByPlayer(player) ?: return
 
         for (slot in event.rawSlots) {
-            if (slot < gui.size) {
-                val guiItem = gui.items[slot]
-                if (!(guiItem?.isMovable ?: gui.isPutable)) {
-                    event.isCancelled = true
-                    return
-                }
+            if (slot > gui.size) continue
+
+            val guiItem = gui.items[slot]
+            if (!(guiItem?.isMovable ?: gui.isPutable)) {
+                event.isCancelled = true
+                return
             }
         }
     }

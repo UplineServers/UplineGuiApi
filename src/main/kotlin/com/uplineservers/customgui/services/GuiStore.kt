@@ -10,7 +10,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
-object GuiStorage {
+object GuiStore {
     private val gson = Gson()
     private val key = NamespacedKey(CustomGui.Companion.instance, "stored_inventory")
 
@@ -27,8 +27,8 @@ object GuiStorage {
         }
 
         val json = GsonBuilder().create().toJson(serializedItems)
-
-        if (json.length > 32767) {
+        val maxSize = CustomGui.instance.config.getInt("maxSize", 32767)
+        if (json.length > maxSize) {
             CustomGui.instance.logger.warning("NBT data too large to save!")
             return
         }

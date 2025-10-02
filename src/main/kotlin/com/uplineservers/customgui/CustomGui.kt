@@ -3,7 +3,7 @@ package com.uplineservers.customgui
 import com.uplineservers.customgui.commands.CommandRegisterer
 import com.uplineservers.customgui.listeners.ListenerRegisterer
 import com.uplineservers.customgui.services.GuiManager
-import com.uplineservers.customgui.services.GuiStorage
+import com.uplineservers.customgui.services.GuiStore
 import org.bukkit.plugin.java.JavaPlugin
 
 class CustomGui : JavaPlugin() {
@@ -15,24 +15,27 @@ class CustomGui : JavaPlugin() {
 
     override fun onEnable() {
         instance = this
-        logger.info("Enabling CustomGUI plugin...")
-        
+        logger.info("Enabling ${this.name} plugin...")
+
+        saveDefaultConfig()
+
         // Register event listeners
         ListenerRegisterer(this)
         
         // Register commands
         CommandRegisterer(this)
         
-        logger.info("CustomGUI plugin has been enabled successfully!")
+        logger.info("${this.name} plugin has been enabled successfully!")
     }
 
     override fun onDisable() {
-        logger.info("Disabling CustomGUI plugin...")
+        logger.info("Disabling ${this.name} plugin...")
 
-        GuiManager.guis.values.forEach { gui ->
-            if ((gui.dataItem != null || gui.dataEntity != null) && gui.inventory != null) {
-                GuiStorage.save(gui)
-            }
+        // Make sure to save every gui
+        GuiManager.getGuis().forEach { gui ->
+            if (gui.dataItem != null || gui.dataEntity != null)
+                GuiStore.save(gui)
+            GuiManager.delete(gui)
         }
     }
 

@@ -1,8 +1,12 @@
 package com.uplineservers.customgui.examples
 
 import com.uplineservers.customgui.models.Gui
+import com.uplineservers.customgui.models.EXTRA_INVENTORY
+import com.uplineservers.customgui.models.GuiItem
 import com.uplineservers.customgui.services.GuiManager
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 fun InventoryMenu(player: Player){
     val existing = GuiManager.getById("inventoryMenu_" + player.uniqueId)
@@ -11,10 +15,28 @@ fun InventoryMenu(player: Player){
     val gui = Gui(
         id = "inventoryMenu_" + player.uniqueId,
         title = "§aInventory Menu",
-        size = 81, // Full 2chest + 3 rows of player inventory
+        size = 54,
+        extraSize = EXTRA_INVENTORY.MAIN,
         isTakeable = false,
         isPutable = false
     )
+
+    for (i in 0 until 8) {
+        gui.items[54 + i] = GuiItem(ItemStack(Material.WOODEN_SWORD)) {
+            if (it.whoClicked is Player)
+                (it.whoClicked as Player).inventory.addItem(ItemStack(Material.OAK_LOG))
+        }
+        gui.items[63 + i] = GuiItem(ItemStack(Material.STONE_SWORD)) {
+            if (it.whoClicked is Player)
+                (it.whoClicked as Player).inventory.addItem(ItemStack(Material.COBBLESTONE))
+        }
+        gui.items[72 + i] = GuiItem(ItemStack(Material.IRON_SWORD)) {
+            if (it.whoClicked is Player)
+                (it.whoClicked as Player).inventory.addItem(ItemStack(Material.IRON_INGOT))
+        }
+    }
+
+
 
     gui.build()
     gui.open(player)

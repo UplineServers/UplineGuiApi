@@ -1,1 +1,1 @@
-rootProject.name = "CustomGUI"
+rootProject.name = "CustomGui"

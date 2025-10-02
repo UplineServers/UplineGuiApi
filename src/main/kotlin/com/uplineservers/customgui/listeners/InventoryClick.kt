@@ -1,5 +1,6 @@
 package com.uplineservers.customgui.listeners
 
+import com.uplineservers.customgui.models.EXTRA_INVENTORY
 import com.uplineservers.customgui.models.Gui
 import com.uplineservers.customgui.models.SHIFT_PROTECTION
 import com.uplineservers.customgui.services.GuiManager
@@ -13,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 
-class InventoryClick(plugin: JavaPlugin) : Listener {
+class InventoryClick(val plugin: JavaPlugin) : Listener {
     val blockedKey = NamespacedKey.minecraft("gui_blocked")
 
     @EventHandler
@@ -86,6 +87,12 @@ class InventoryClick(plugin: JavaPlugin) : Listener {
      */
     private fun handlePlayerInventoryClick(event: InventoryClickEvent, gui: Gui): Boolean {
         if (event.clickedInventory!!.type != InventoryType.PLAYER) return false
+        if (gui.extraSize != null){
+            event.isCancelled = true
+            val guiItem = gui.items[event.rawSlot]
+            guiItem?.onClick?.invoke(event)
+            return true
+        }
 
         // Need to check for shift, because the slots might not be putable
         if (event.isShiftClick && !gui.isPutable) {
