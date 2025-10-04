@@ -1,6 +1,7 @@
 package com.uplineservers.customgui.models
 
 import com.uplineservers.customgui.services.GuiBuild
+import com.uplineservers.customgui.services.GuiManager
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -56,7 +57,7 @@ class Gui(
         set(value) {
             if (_title != value) {
                 _title = value
-                GuiBuild.update(this)
+                this.update()
             }
         }
 
@@ -68,5 +69,17 @@ class Gui(
 
     fun build(){
         GuiBuild.build(this)
+    }
+
+    fun update(){
+        GuiBuild.update(this)
+    }
+
+    fun updateSlot(slot: Int, player: Player){
+        GuiBuild.updateSlot(this, slot, player);
+    }
+
+    fun addPlayer(player: Player) {
+        GuiManager.addPlayer(this, player)
     }
 }

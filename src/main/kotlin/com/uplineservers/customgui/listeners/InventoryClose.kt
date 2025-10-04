@@ -2,6 +2,7 @@ package com.uplineservers.customgui.listeners
 
 import com.uplineservers.customgui.services.GuiManager
 import com.uplineservers.customgui.services.GuiStore
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -17,15 +18,7 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
 
         gui.isUpdating = true
         gui.onClose?.invoke(event)
-
-        if (gui.dataItem != null || gui.dataEntity != null)
-            GuiStore.save(gui)
-
         GuiManager.removePlayer(player)
         gui.isUpdating = false
-
-        if (GuiManager.getPlayers(gui.id).isEmpty()) {
-            GuiManager.delete(gui)
-        }
     }
 }

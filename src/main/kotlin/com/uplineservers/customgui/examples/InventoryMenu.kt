@@ -14,14 +14,14 @@ fun InventoryMenu(player: Player){
 
     val gui = Gui(
         id = "inventoryMenu_" + player.uniqueId,
-        title = "§aInventory Menu",
+        title = "§bInventory Menu",
         size = 54,
         extraSize = EXTRA_INVENTORY.MAIN,
         isTakeable = false,
         isPutable = false
     )
 
-    for (i in 0 until 8) {
+    for (i in 0 until 9) {
         gui.items[54 + i] = GuiItem(ItemStack(Material.WOODEN_SWORD)) {
             if (it.whoClicked is Player)
                 (it.whoClicked as Player).inventory.addItem(ItemStack(Material.OAK_LOG))
@@ -30,13 +30,11 @@ fun InventoryMenu(player: Player){
             if (it.whoClicked is Player)
                 (it.whoClicked as Player).inventory.addItem(ItemStack(Material.COBBLESTONE))
         }
-        gui.items[72 + i] = GuiItem(ItemStack(Material.IRON_SWORD)) {
+        gui.items[72 + i] = GuiItem(ItemStack(Material.GOLDEN_SWORD)) {
             if (it.whoClicked is Player)
-                (it.whoClicked as Player).inventory.addItem(ItemStack(Material.IRON_INGOT))
+                (it.whoClicked as Player).inventory.addItem(ItemStack(Material.GOLD_INGOT))
         }
     }
-
-
 
     gui.build()
     gui.open(player)

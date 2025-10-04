@@ -35,7 +35,7 @@ class CustomGui : JavaPlugin() {
         GuiManager.getGuis().forEach { gui ->
             if (gui.dataItem != null || gui.dataEntity != null)
                 GuiStore.save(gui)
-            GuiManager.delete(gui)
+            GuiManager.removeAll(gui)
         }
     }
 

@@ -13,9 +13,7 @@ class ItemDrop(plugin: Plugin) : Listener {
         val player = event.player
         val gui = GuiManager.getByPlayer(player) ?: return
 
-        if(gui.isUpdating) {
+        if(gui.isUpdating)
             event.isCancelled = true
-            return
-        }
     }
 }

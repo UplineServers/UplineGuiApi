@@ -1,5 +1,6 @@
 package com.uplineservers.customgui.services
 
+import com.uplineservers.customgui.CustomGui
 import com.uplineservers.customgui.models.Gui
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -41,20 +42,12 @@ object GuiManager {
     fun delete(gui: Gui) {
         gui.onDestroy?.invoke(gui)
         guis.remove(gui.id)
-        playersGUI.entries.forEach { player ->
-            removePlayer(Bukkit.getPlayer(player.key) ?: return@forEach)
-        }
     }
 
     // ─── Players ─────────────────────────────────────────────────
 
-    fun addPlayer(id: String, player: Player) {
-        playersGUI[player.uniqueId] = id
-    }
-
-    fun removePlayer(player: Player) {
-        playersGUI.remove(player.uniqueId) ?: return
-        InventoryManager.load(player)
+    fun addPlayer(gui: Gui, player: Player) {
+        playersGUI[player.uniqueId] = gui.id
     }
 
     fun getPlayers(id: String): List<Player> {
@@ -63,4 +56,33 @@ object GuiManager {
             .keys
             .mapNotNull { Bukkit.getPlayer(it) }
     }
+
+    fun removeAll(gui: Gui) {
+        val players = getPlayers(gui.id)
+        players.forEach { removePlayer(it, true) }
+    }
+
+    fun removePlayer(player: Player, force: Boolean = false) {
+        val gui = this.getByPlayer(player) ?: return
+
+        if (gui.dataItem != null || gui.dataEntity != null)
+            GuiStore.save(gui)
+
+        playersGUI.remove(player.uniqueId) ?: return
+
+        if (getPlayers(gui.id).isEmpty())
+            delete(gui)
+
+        if (force) {
+            InventoryManager.load(player)
+        } else {
+            Bukkit.getScheduler().runTaskLater(CustomGui.instance, Runnable {
+                if (playersGUI.containsKey(player.uniqueId)) return@Runnable
+
+                player.sendMessage("§cThe GUI has been closed.")
+                InventoryManager.load(player)
+            }, 1L)
+        }
+    }
+
 }

@@ -88,9 +88,9 @@ class InventoryClick(val plugin: JavaPlugin) : Listener {
     private fun handlePlayerInventoryClick(event: InventoryClickEvent, gui: Gui): Boolean {
         if (event.clickedInventory!!.type != InventoryType.PLAYER) return false
         if (gui.extraSize != null){
-            event.isCancelled = true
             val guiItem = gui.items[event.rawSlot]
             guiItem?.onClick?.invoke(event)
+            event.isCancelled = true
             return true
         }
 

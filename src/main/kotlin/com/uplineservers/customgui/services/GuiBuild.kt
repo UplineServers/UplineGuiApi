@@ -2,8 +2,10 @@ package com.uplineservers.customgui.services
 
 import com.uplineservers.customgui.models.EXTRA_INVENTORY
 import com.uplineservers.customgui.models.Gui
+import com.uplineservers.customgui.models.GuiItem
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 
@@ -21,6 +23,18 @@ object GuiBuild {
                 Bukkit.createInventory(null, gui.type, title)
             }
         }
+    }
+
+    fun buildExtra(gui: Gui, player: Player){
+        if(gui.extraSize == null) return
+
+        InventoryManager.save(player, gui.extraSize)
+        gui.items
+            .filterKeys { it > 53 }
+            .forEach { (slot, item) ->
+                val targetSlot = if (slot >= 81) slot - 81 else slot - 45
+                player.inventory.setItem(targetSlot, item.item)
+            }
     }
 
     fun build(gui: Gui) {
@@ -67,4 +81,17 @@ object GuiBuild {
         }
         gui.isUpdating = false
     }
+
+    fun updateSlot(gui: Gui, slot: Int, player: Player) {
+        if(slot < 54) {
+            if(gui.inventory == null) return
+            gui.inventory!!.setItem(slot, gui.items[slot]?.item)
+        }
+
+        else if (gui.extraSize != null) {
+            val targetSlot = if (slot >= 81) slot - 81 else slot - 45
+            player.inventory.setItem(targetSlot, gui.items[slot]?.item)
+        }
+    }
+
 }

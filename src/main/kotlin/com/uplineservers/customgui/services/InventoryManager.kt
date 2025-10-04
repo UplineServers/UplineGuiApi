@@ -10,6 +10,8 @@ object InventoryManager {
 
     /** Save the player's inventory depending on type */
     fun save(player: Player, type: EXTRA_INVENTORY) {
+        if(inventories.containsKey(player.uniqueId)) return
+
         when (type) {
             EXTRA_INVENTORY.FULL -> {
                 inventories[player.uniqueId] = player.inventory.contents.clone()

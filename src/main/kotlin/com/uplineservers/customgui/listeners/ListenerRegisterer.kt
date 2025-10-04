@@ -12,7 +12,8 @@ class ListenerRegisterer(plugin: JavaPlugin) {
         pluginManager.registerEvents(InventoryClick(plugin), plugin)
         pluginManager.registerEvents(InventoryDrag(plugin), plugin)
         pluginManager.registerEvents(ItemDrop(plugin), plugin)
-        
+        pluginManager.registerEvents(ItemPick(plugin), plugin)
+
         plugin.logger.info("Event listeners registered successfully!")
     }
 }
