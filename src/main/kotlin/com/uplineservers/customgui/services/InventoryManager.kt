@@ -7,6 +7,7 @@ import java.util.UUID
 
 object InventoryManager {
     private val inventories: MutableMap<UUID, Array<ItemStack?>> = mutableMapOf()
+    private val heldSlot: MutableMap<UUID, Int> = mutableMapOf()
 
     /** Save the player's inventory depending on type */
     fun save(player: Player, type: EXTRA_INVENTORY) {
@@ -15,6 +16,7 @@ object InventoryManager {
         when (type) {
             EXTRA_INVENTORY.FULL -> {
                 inventories[player.uniqueId] = player.inventory.contents.clone()
+                heldSlot[player.uniqueId] = player.inventory.heldItemSlot
                 player.inventory.clear()
             }
 
@@ -40,6 +42,8 @@ object InventoryManager {
             player.inventory.contents = saved
         }
 
+        if(heldSlot.containsKey(player.uniqueId))
+            player.inventory.heldItemSlot = heldSlot[player.uniqueId]!!
         inventories.remove(player.uniqueId)
     }
 }

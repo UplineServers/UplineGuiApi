@@ -79,7 +79,6 @@ object GuiManager {
             Bukkit.getScheduler().runTaskLater(CustomGui.instance, Runnable {
                 if (playersGUI.containsKey(player.uniqueId)) return@Runnable
 
-                player.sendMessage("§cThe GUI has been closed.")
                 InventoryManager.load(player)
             }, 1L)
         }
