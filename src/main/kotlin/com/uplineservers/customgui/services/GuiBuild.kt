@@ -1,5 +1,6 @@
 package com.uplineservers.customgui.services
 
+import com.uplineservers.customgui.CustomGui
 import com.uplineservers.customgui.models.EXTRA_INVENTORY
 import com.uplineservers.customgui.models.Gui
 import com.uplineservers.customgui.models.GuiItem
@@ -60,26 +61,18 @@ object GuiBuild {
         GuiManager.add(gui)
     }
 
+    // TODO: Update old inventory?
     fun update(gui: Gui) {
         if (gui.inventory == null) return
 
-        val oldContents = gui.inventory!!.contents.copyOf()
-        val inventory = createInventory(gui)
-
-        oldContents.forEachIndexed { index, item ->
-            if (item != null) {
-                inventory.setItem(index, item.clone())
-            }
+        val newInventory = createInventory(gui)
+        gui.inventory!!.contents.withIndex().forEach { (slot, item) ->
+            newInventory.setItem(slot, item)
         }
+        gui.inventory = newInventory
 
-        gui.inventory = inventory
-
-        gui.isUpdating = true
-        for (player in GuiManager.getPlayers(gui.id)) {
-            player.closeInventory()
-            player.openInventory(inventory)
-        }
-        gui.isUpdating = false
+        for (player in GuiManager.getPlayers(gui.id))
+            player.openInventory(newInventory)
     }
 
     fun updateSlot(gui: Gui, slot: Int, player: Player) {

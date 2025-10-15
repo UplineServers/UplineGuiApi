@@ -16,6 +16,8 @@ class InventoryClose(private val plugin: JavaPlugin) : Listener {
         val player = event.player as? Player ?: return
         val gui = GuiManager.getByInventory(event.inventory) ?: return
 
+//        player.sendMessage("Closing GUI: ${gui.id}")
+
         gui.isUpdating = true
         gui.onClose?.invoke(event)
         GuiManager.removePlayer(player)

@@ -15,6 +15,8 @@ class InventoryOpen(plugin: JavaPlugin) : Listener {
         val player = event.player as? Player ?: return
         val gui = GuiManager.getByInventory(event.inventory) ?: return
 
+//        player.sendMessage("Opening GUI: ${gui.id}")
+
         gui.addPlayer(player)
         GuiBuild.buildExtra(gui, player)
 
