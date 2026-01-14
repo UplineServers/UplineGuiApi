@@ -57,7 +57,7 @@ class Gui(
         set(value) {
             if (_title != value) {
                 _title = value
-                this.update()
+                if(this.inventory != null) this.update()
             }
         }
 
