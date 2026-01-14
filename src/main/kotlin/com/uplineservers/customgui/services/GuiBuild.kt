@@ -1,10 +1,8 @@
 package com.uplineservers.customgui.services
 
-import com.uplineservers.customgui.CustomGui
 import com.uplineservers.customgui.models.EXTRA_INVENTORY
 import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.models.GuiItem
-import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
@@ -12,7 +10,7 @@ import org.bukkit.inventory.Inventory
 
 object GuiBuild {
     private fun createInventory(gui: Gui): Inventory {
-        val title = Component.text(gui.title)
+        val title = MiniMessage.miniMessage().deserialize(gui.title)
 
         return when (gui.type) {
             InventoryType.CHEST -> {
