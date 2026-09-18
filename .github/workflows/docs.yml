@@ -21,10 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Dokka 2.0.0's embedded Kotlin analysis cannot run on JDK 25 (it fails with
+      # "IllegalArgumentException: 25.0.4.1"), and the worker inherits the Gradle daemon's JVM.
+      # dokkaGenerate does not compile anything, so JDK 21 is all this job needs.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: '21'
 
       - uses: gradle/actions/setup-gradle@v4
 

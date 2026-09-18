@@ -472,16 +472,18 @@ push to `main`. Enable it once under **Settings → Pages → Source: GitHub Act
 Consumers also get the KDoc inline in their IDE without any of this, because the build publishes a
 sources jar next to the API jar.
 
-> **Local generation on a Homebrew JDK:** Dokka's embedded Kotlin compiler cannot parse Homebrew's
-> four-part version strings (`25.0.4.1`) and fails with `IllegalArgumentException: 25.0.4.1`. It is
-> the Gradle daemon's JVM that matters, not the toolchain, so run it against any JDK with a normal
-> three-part version:
+> **Dokka cannot run on JDK 25.** Dokka 2.0.0's embedded Kotlin analysis rejects it with
+> `IllegalArgumentException: 25.0.4.1`, whatever the vendor, and 2.0.0 is the newest release.
+> What matters is the JVM the *Gradle daemon* runs on, not the toolchain — `dokkaGenerate` does
+> not compile anything — so point the daemon at any JDK from 17 to 24:
 >
 > ```bash
 > ./gradlew dokkaGenerate -Dorg.gradle.java.home=/Library/Java/JavaVirtualMachines/temurin-24.jdk/Contents/Home
 > ```
 >
-> CI is unaffected — Temurin reports `25.0.1`.
+> Or set `org.gradle.java.home` in `~/.gradle/gradle.properties` so you never think about it again
+> — keep it out of the committed `gradle.properties`, which every other machine reads too.
+> The docs workflow pins JDK 21 for the same reason.
 
 ---
 
