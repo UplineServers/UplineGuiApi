@@ -1,4 +1,4 @@
-package com.uplineservers.customgui.commands
+package com.uplineservers.uplineguiapi.commands
 
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -16,14 +16,14 @@ class CommandRegisterer(private val plugin: JavaPlugin) : SubCommand {
 
     init {
         plugin.logger.info("Registering commands...")
-        plugin.getCommand("customgui")?.setExecutor(this)
-        plugin.getCommand("customgui")?.tabCompleter = this
+        plugin.getCommand("uplineguiapi")?.setExecutor(this)
+        plugin.getCommand("uplineguiapi")?.tabCompleter = this
         plugin.logger.info("Commands registered successfully!")
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
-            sender.sendMessage("§eUsage: /customgui <${subCommands.keys.joinToString("|")}> [args]")
+            sender.sendMessage("§eUsage: /uplineguiapi <${subCommands.keys.joinToString("|")}> [args]")
             return true
         }
 

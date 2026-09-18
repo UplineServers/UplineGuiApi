@@ -1,9 +1,9 @@
-package com.uplineservers.customgui.examples
+package com.uplineservers.uplineguiapi.examples
 
-import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.models.EXTRA_INVENTORY
-import com.uplineservers.customgui.models.GuiItem
-import com.uplineservers.customgui.services.GuiManager
+import com.uplineservers.uplineguiapi.models.Gui
+import com.uplineservers.uplineguiapi.models.EXTRA_INVENTORY
+import com.uplineservers.uplineguiapi.models.GuiItem
+import com.uplineservers.uplineguiapi.services.GuiManager
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

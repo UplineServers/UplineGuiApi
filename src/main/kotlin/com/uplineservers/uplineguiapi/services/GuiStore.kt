@@ -1,10 +1,10 @@
-package com.uplineservers.customgui.services
+package com.uplineservers.uplineguiapi.services
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.uplineservers.customgui.CustomGui
-import com.uplineservers.customgui.models.Gui
+import com.uplineservers.uplineguiapi.UplineGuiApi
+import com.uplineservers.uplineguiapi.models.Gui
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -12,7 +12,7 @@ import org.bukkit.persistence.PersistentDataType
 
 object GuiStore {
     private val gson = Gson()
-    private val key = NamespacedKey(CustomGui.Companion.instance, "stored_inventory")
+    private val key = NamespacedKey(UplineGuiApi.Companion.instance, "stored_inventory")
 
     fun save(gui: Gui) {
         val inventory = gui.inventory ?: return
@@ -27,9 +27,9 @@ object GuiStore {
         }
 
         val json = GsonBuilder().create().toJson(serializedItems)
-        val maxSize = CustomGui.instance.config.getInt("maxSize", 32767)
+        val maxSize = UplineGuiApi.instance.config.getInt("maxSize", 32767)
         if (json.length > maxSize) {
-            CustomGui.instance.logger.warning("NBT data too large to save!")
+            UplineGuiApi.instance.logger.warning("NBT data too large to save!")
             return
         }
 
@@ -63,7 +63,7 @@ object GuiStore {
             else -> return
         } ?: return
 
-        CustomGui.instance.logger.info("Loading stored inventory for GUI ${gui.id}")
+        UplineGuiApi.instance.logger.info("Loading stored inventory for GUI ${gui.id}")
 
         val type = object : TypeToken<List<Map<String, Any>>>() {}.type
         val savedList: List<Map<String, Any>> = gson.fromJson(json, type)

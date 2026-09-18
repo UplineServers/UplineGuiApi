@@ -1,6 +1,6 @@
-package com.uplineservers.customgui.services
+package com.uplineservers.uplineguiapi.services
 
-import com.uplineservers.customgui.models.EXTRA_INVENTORY
+import com.uplineservers.uplineguiapi.models.EXTRA_INVENTORY
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.UUID

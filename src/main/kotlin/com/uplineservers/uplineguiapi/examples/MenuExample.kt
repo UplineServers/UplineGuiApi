@@ -1,8 +1,8 @@
-package com.uplineservers.customgui.examples
+package com.uplineservers.uplineguiapi.examples
 
-import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.models.GuiItem
-import com.uplineservers.customgui.services.GuiManager
+import com.uplineservers.uplineguiapi.models.Gui
+import com.uplineservers.uplineguiapi.models.GuiItem
+import com.uplineservers.uplineguiapi.services.GuiManager
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.entity.Player

@@ -1,7 +1,7 @@
-package com.uplineservers.customgui.services
+package com.uplineservers.uplineguiapi.services
 
-import com.uplineservers.customgui.models.EXTRA_INVENTORY
-import com.uplineservers.customgui.models.Gui
+import com.uplineservers.uplineguiapi.models.EXTRA_INVENTORY
+import com.uplineservers.uplineguiapi.models.Gui
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

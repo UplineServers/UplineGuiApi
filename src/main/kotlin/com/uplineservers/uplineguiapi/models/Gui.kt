@@ -1,7 +1,7 @@
-package com.uplineservers.customgui.models
+package com.uplineservers.uplineguiapi.models
 
-import com.uplineservers.customgui.services.GuiBuild
-import com.uplineservers.customgui.services.GuiManager
+import com.uplineservers.uplineguiapi.services.GuiBuild
+import com.uplineservers.uplineguiapi.services.GuiManager
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
 enum class SHIFT_PROTECTION {

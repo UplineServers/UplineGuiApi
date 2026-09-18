@@ -1,9 +1,9 @@
-package com.uplineservers.customgui.listeners
+package com.uplineservers.uplineguiapi.listeners
 
-import com.uplineservers.customgui.models.EXTRA_INVENTORY
-import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.models.SHIFT_PROTECTION
-import com.uplineservers.customgui.services.GuiManager
+import com.uplineservers.uplineguiapi.models.EXTRA_INVENTORY
+import com.uplineservers.uplineguiapi.models.Gui
+import com.uplineservers.uplineguiapi.models.SHIFT_PROTECTION
+import com.uplineservers.uplineguiapi.services.GuiManager
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player

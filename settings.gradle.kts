@@ -1,1 +1,1 @@
-rootProject.name = "CustomGui"
+rootProject.name = "UplineGuiApi"

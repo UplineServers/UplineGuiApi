@@ -1,16 +1,15 @@
-name: CustomGui
-version: '1.3'
-main: com.uplineservers.customgui.CustomGui
-api-version: '1.21'
+name: UplineGuiApi
+version: '${version}'
+main: com.uplineservers.uplineguiapi.UplineGuiApi
+api-version: '26.2'
 authors: [ Emanuel Scura ]
 website: https://emanuelscura.me
 description: Advanced custom GUI API for Minecraft plugins
 
-depend: [ktlibs-kotlin-stdlib]
-
 commands:
-  customgui:
-    description: Main command for CustomGui plugin
+  uplineguiapi:
+    description: Main command for UplineGuiApi plugin
+    aliases: [ uplinegui ]
     usage: /<command> <test|info> [option]
-    permission: customgui.use
+    permission: uplinegui.use
     permission-message: You do not have permission to use this command

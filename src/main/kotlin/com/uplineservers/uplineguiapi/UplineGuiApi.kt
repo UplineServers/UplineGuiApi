@@ -1,15 +1,15 @@
-package com.uplineservers.customgui
+package com.uplineservers.uplineguiapi
 
-import com.uplineservers.customgui.commands.CommandRegisterer
-import com.uplineservers.customgui.listeners.ListenerRegisterer
-import com.uplineservers.customgui.services.GuiManager
-import com.uplineservers.customgui.services.GuiStore
+import com.uplineservers.uplineguiapi.commands.CommandRegisterer
+import com.uplineservers.uplineguiapi.listeners.ListenerRegisterer
+import com.uplineservers.uplineguiapi.services.GuiManager
+import com.uplineservers.uplineguiapi.services.GuiStore
 import org.bukkit.plugin.java.JavaPlugin
 
-class CustomGui : JavaPlugin() {
+class UplineGuiApi : JavaPlugin() {
 
     companion object {
-        lateinit var instance: CustomGui
+        lateinit var instance: UplineGuiApi
             private set
     }
 

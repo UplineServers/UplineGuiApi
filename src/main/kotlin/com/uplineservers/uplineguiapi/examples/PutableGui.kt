@@ -1,7 +1,7 @@
-package com.uplineservers.customgui.examples
+package com.uplineservers.uplineguiapi.examples
 
-import com.uplineservers.customgui.models.Gui
-import com.uplineservers.customgui.services.GuiManager
+import com.uplineservers.uplineguiapi.models.Gui
+import com.uplineservers.uplineguiapi.services.GuiManager
 import org.bukkit.entity.Player
 
 fun PutableGui(player: Player) {

@@ -1,11 +1,11 @@
-package com.uplineservers.customgui.commands
+package com.uplineservers.uplineguiapi.commands
 
-import com.uplineservers.customgui.examples.InventoryMenu
-import com.uplineservers.customgui.examples.ItemSavedGui
-import com.uplineservers.customgui.examples.MenuExampleGui
-import com.uplineservers.customgui.examples.MoveableGui
-import com.uplineservers.customgui.examples.PutableGui
-import com.uplineservers.customgui.examples.TakeableGui
+import com.uplineservers.uplineguiapi.examples.InventoryMenu
+import com.uplineservers.uplineguiapi.examples.ItemSavedGui
+import com.uplineservers.uplineguiapi.examples.MenuExampleGui
+import com.uplineservers.uplineguiapi.examples.MoveableGui
+import com.uplineservers.uplineguiapi.examples.PutableGui
+import com.uplineservers.uplineguiapi.examples.TakeableGui
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -20,7 +20,7 @@ class TestCommand : SubCommand{
         }
 
         if (args.isEmpty()) {
-            sender.sendMessage("§eUsage: /customgui test <${options.joinToString("|")}>")
+            sender.sendMessage("§eUsage: /uplineguiapi test <${options.joinToString("|")}>")
             return true
         }
 

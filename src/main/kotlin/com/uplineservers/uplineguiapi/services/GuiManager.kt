@@ -1,7 +1,7 @@
-package com.uplineservers.customgui.services
+package com.uplineservers.uplineguiapi.services
 
-import com.uplineservers.customgui.CustomGui
-import com.uplineservers.customgui.models.Gui
+import com.uplineservers.uplineguiapi.UplineGuiApi
+import com.uplineservers.uplineguiapi.models.Gui
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -76,7 +76,7 @@ object GuiManager {
         if (force) {
             InventoryManager.load(player)
         } else {
-            Bukkit.getScheduler().runTaskLater(CustomGui.instance, Runnable {
+            Bukkit.getScheduler().runTaskLater(UplineGuiApi.instance, Runnable {
                 if (playersGUI.containsKey(player.uniqueId)) return@Runnable
 
                 InventoryManager.load(player)

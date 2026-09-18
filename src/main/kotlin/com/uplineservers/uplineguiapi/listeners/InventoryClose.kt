@@ -1,7 +1,7 @@
-package com.uplineservers.customgui.listeners
+package com.uplineservers.uplineguiapi.listeners
 
-import com.uplineservers.customgui.services.GuiManager
-import com.uplineservers.customgui.services.GuiStore
+import com.uplineservers.uplineguiapi.services.GuiManager
+import com.uplineservers.uplineguiapi.services.GuiStore
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
