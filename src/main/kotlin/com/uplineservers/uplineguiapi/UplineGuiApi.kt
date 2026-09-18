@@ -6,9 +6,14 @@ import com.uplineservers.uplineguiapi.services.GuiManager
 import com.uplineservers.uplineguiapi.services.GuiStore
 import org.bukkit.plugin.java.JavaPlugin
 
+/**
+ * Plugin entry point. Registers the listeners and commands, and on disable saves every bound
+ * GUI and restores the inventories of anyone still viewing one.
+ */
 class UplineGuiApi : JavaPlugin() {
 
     companion object {
+        /** The running plugin instance, available from `onEnable` onwards. */
         lateinit var instance: UplineGuiApi
             private set
     }

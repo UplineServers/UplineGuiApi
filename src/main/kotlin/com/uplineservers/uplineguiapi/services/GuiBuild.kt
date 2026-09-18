@@ -8,6 +8,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 
+/**
+ * Creates and refreshes the Bukkit inventories behind a [Gui]. Prefer the [Gui] methods
+ * ([Gui.build], [Gui.update], [Gui.updateSlot]) over calling this directly.
+ */
 object GuiBuild {
     private fun createInventory(gui: Gui): Inventory {
         val title = MiniMessage.miniMessage().deserialize(gui.title)
@@ -24,6 +28,10 @@ object GuiBuild {
         }
     }
 
+    /**
+     * Backs up [player]'s real inventory and writes the overlay slots (54 and above) into it.
+     * Called by the open listener; does nothing when the GUI has no [Gui.extraSize].
+     */
     fun buildExtra(gui: Gui, player: Player){
         if(gui.extraSize == null) return
 
@@ -36,6 +44,7 @@ object GuiBuild {
             }
     }
 
+    /** Implementation behind [Gui.build]. */
     fun build(gui: Gui) {
         if(GuiManager.getById(gui.id) != null)
             throw IllegalArgumentException("GUI with id ${gui.id} already exists")
@@ -60,6 +69,7 @@ object GuiBuild {
     }
 
     // TODO: Update old inventory?
+    /** Implementation behind [Gui.update]. */
     fun update(gui: Gui) {
         if (gui.inventory == null) return
 
@@ -73,6 +83,7 @@ object GuiBuild {
             player.openInventory(newInventory)
     }
 
+    /** Implementation behind [Gui.updateSlot]. */
     fun updateSlot(gui: Gui, slot: Int, player: Player) {
         if(slot < 54) {
             if(gui.inventory == null) return

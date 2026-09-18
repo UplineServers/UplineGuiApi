@@ -34,6 +34,7 @@ inventory backup/restore and optional persistence of the GUI contents into an it
 - [Commands and permissions](#commands-and-permissions)
 - [Configuration](#configuration)
 - [Building from source](#building-from-source)
+- [API documentation](#api-documentation)
 - [Releasing (maintainers)](#releasing-maintainers)
 - [Project structure](#project-structure)
 - [Notes and caveats](#notes-and-caveats)
@@ -441,6 +442,49 @@ The server runs in `run/`, which is git-ignored.
 
 ---
 
+## API documentation
+
+Reference docs are written as **KDoc** — Kotlin's Javadoc — directly above the declarations in
+`src/main/kotlin/`:
+
+```kotlin
+/**
+ * One slot of a [Gui]: the stack shown there and what happens when it is clicked.
+ *
+ * @property isMovable `false` locks the slot: the item can be clicked but never taken.
+ */
+data class GuiItem(/* ... */)
+```
+
+Square brackets like `[Gui]` become links, `@property` / `@param` / `@return` / `@throws`
+document members, and fenced blocks render as examples. Package-level and module-level prose
+lives in [docs/module.md](docs/module.md).
+
+[Dokka](https://kotl.in/dokka) renders it all into a static site:
+
+```bash
+./gradlew dokkaGenerate      # -> build/docs/api/index.html
+```
+
+[`.github/workflows/docs.yml`](.github/workflows/docs.yml) republishes it to GitHub Pages on every
+push to `main`. Enable it once under **Settings → Pages → Source: GitHub Actions**.
+
+Consumers also get the KDoc inline in their IDE without any of this, because the build publishes a
+sources jar next to the API jar.
+
+> **Local generation on a Homebrew JDK:** Dokka's embedded Kotlin compiler cannot parse Homebrew's
+> four-part version strings (`25.0.4.1`) and fails with `IllegalArgumentException: 25.0.4.1`. It is
+> the Gradle daemon's JVM that matters, not the toolchain, so run it against any JDK with a normal
+> three-part version:
+>
+> ```bash
+> ./gradlew dokkaGenerate -Dorg.gradle.java.home=/Library/Java/JavaVirtualMachines/temurin-24.jdk/Contents/Home
+> ```
+>
+> CI is unaffected — Temurin reports `25.0.1`.
+
+---
+
 ## Releasing (maintainers)
 
 The build applies `maven-publish`, so the API jar, a sources jar and the shaded `-all` jar are all
@@ -507,6 +551,8 @@ Kotlin). Worth it only once the API is stable and widely used.
 
 ```
 .github/workflows/publish.yml    # release -> GitHub Packages + release asset
+.github/workflows/docs.yml       # push to main -> KDoc site on GitHub Pages
+docs/module.md                   # module and package prose for the KDoc site
 jitpack.yml                      # JitPack build configuration
 src/main/kotlin/com/uplineservers/uplineguiapi/
 ├── UplineGuiApi.kt              # plugin entry point, holds the singleton instance
@@ -556,6 +602,7 @@ src/main/kotlin/com/uplineservers/uplineguiapi/
 | [docs/TUTORIAL.md](docs/TUTORIAL.md) | Step-by-step guide from an empty menu to overlays and persistence. |
 | [docs/EXAMPLES.md](docs/EXAMPLES.md) | The six built-in demos explained, with the patterns behind them. |
 | [docs/API.md](docs/API.md) | Complete reference for every public class, field and method. |
+| Generated KDoc | `./gradlew dokkaGenerate`, or the GitHub Pages site once enabled. |
 
 ---
 

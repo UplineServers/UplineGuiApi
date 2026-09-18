@@ -5,6 +5,12 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.UUID
 
+/**
+ * In-memory backup of players' real inventories while an overlay GUI
+ * (see [com.uplineservers.uplineguiapi.models.EXTRA_INVENTORY]) is open.
+ *
+ * Backups do not survive a server crash.
+ */
 object InventoryManager {
     private val inventories: MutableMap<UUID, Array<ItemStack?>> = mutableMapOf()
     private val heldSlot: MutableMap<UUID, Int> = mutableMapOf()

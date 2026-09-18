@@ -10,10 +10,18 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
+/**
+ * Persists a [Gui]'s contents into the persistent data of the item or entity it is bound to,
+ * under the key `uplineguiapi:stored_inventory`.
+ */
 object GuiStore {
     private val gson = Gson()
     private val key = NamespacedKey(UplineGuiApi.Companion.instance, "stored_inventory")
 
+    /**
+     * Serializes the non-empty slots to JSON and stores them on [Gui.dataItem] or
+     * [Gui.dataEntity]. Skipped with a warning when the JSON exceeds `maxSize` from `config.yml`.
+     */
     fun save(gui: Gui) {
         val inventory = gui.inventory ?: return
 
@@ -49,6 +57,7 @@ object GuiStore {
         }
     }
 
+    /** Reads previously stored contents back into the inventory. Called by [Gui.build]. */
     fun load(gui: Gui) {
         val inventory = gui.inventory ?: return
         val json: String = when {

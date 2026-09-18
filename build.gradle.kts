@@ -3,6 +3,7 @@ plugins {
     `java-library`
     id("com.gradleup.shadow") version "9.6.1"
     id("xyz.jpenilla.run-paper") version "3.0.2"
+    id("org.jetbrains.dokka") version "2.0.0"
     `maven-publish`
 }
 
@@ -93,5 +94,30 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN") ?: providers.gradleProperty("gpr.key").orNull
             }
         }
+    }
+}
+
+dokka {
+    moduleName = "UplineGuiApi"
+
+    dokkaSourceSets.main {
+        includes.from("docs/module.md")
+
+        // "View source" links from the generated pages back to GitHub.
+        sourceLink {
+            localDirectory = file("src/main/kotlin")
+            remoteUrl("https://github.com/UplineServers/UplineGuiApi/blob/main/src/main/kotlin")
+            remoteLineSuffix = "#L"
+        }
+
+        // Link Paper/Bukkit types to their own javadocs instead of rendering them as plain text.
+        externalDocumentationLinks.register("paper") {
+            url("https://jd.papermc.io/paper/1.21/")
+            packageListUrl("https://jd.papermc.io/paper/1.21/element-list")
+        }
+    }
+
+    dokkaPublications.html {
+        outputDirectory = layout.buildDirectory.dir("docs/api")
     }
 }
