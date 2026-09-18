@@ -13,7 +13,7 @@ inventory backup/restore and optional persistence of the GUI contents into an it
 | **Language** | Kotlin `2.3.20` (Java 25 toolchain) |
 | **Type** | Standalone plugin that other plugins depend on |
 | **Version** | `1.4` |
-| **Repository** | [UplineServers/CustomGUI](https://github.com/UplineServers/CustomGUI) |
+| **Repository** | [UplineServers/UplineGuiApi](https://github.com/UplineServers/UplineGuiApi) |
 
 ---
 
@@ -112,7 +112,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.2.build.+")
-    compileOnly("com.github.UplineServers:CustomGUI:1.4")          // via JitPack
+    compileOnly("com.github.UplineServers:UplineGuiApi:1.4")          // via JitPack
 }
 ```
 
@@ -130,7 +130,7 @@ repositories {
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:26.2.build.+'
-    compileOnly 'com.github.UplineServers:CustomGUI:1.4'
+    compileOnly 'com.github.UplineServers:UplineGuiApi:1.4'
 }
 ```
 
@@ -160,7 +160,7 @@ dependencies {
   </dependency>
   <dependency>
     <groupId>com.github.UplineServers</groupId>
-    <artifactId>CustomGUI</artifactId>
+    <artifactId>UplineGuiApi</artifactId>
     <version>1.4</version>
     <scope>provided</scope>
   </dependency>
@@ -454,10 +454,10 @@ publishable under `com.uplineservers:uplineguiapi`.
 ### JitPack (zero setup, what the snippets above use)
 
 1. Push a git tag: `git tag 1.4 && git push origin 1.4`.
-2. Open `https://jitpack.io/#UplineServers/CustomGUI` and click **Get it** on the tag.
+2. Open `https://jitpack.io/#UplineServers/UplineGuiApi` and click **Get it** on the tag.
 
 JitPack builds the tag with [`jitpack.yml`](jitpack.yml) and serves it at
-`com.github.UplineServers:CustomGUI:<tag>`. Nothing to configure and no credentials — consumers
+`com.github.UplineServers:UplineGuiApi:<tag>`. Nothing to configure and no credentials — consumers
 just add the `https://jitpack.io` repository. Check the build log for the exact coordinates it
 published.
 

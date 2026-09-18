@@ -87,7 +87,7 @@ publishing {
         // Locally, `./gradlew publishToMavenLocal` needs no credentials at all.
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/UplineServers/CustomGUI")
+            url = uri("https://maven.pkg.github.com/UplineServers/UplineGuiApi")
             credentials {
                 username = System.getenv("GITHUB_ACTOR") ?: providers.gradleProperty("gpr.user").orNull
                 password = System.getenv("GITHUB_TOKEN") ?: providers.gradleProperty("gpr.key").orNull
