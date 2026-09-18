@@ -1,11 +1,13 @@
 plugins {
     kotlin("jvm") version "2.3.20"
+    `java-library`
     id("com.gradleup.shadow") version "9.6.1"
     id("xyz.jpenilla.run-paper") version "3.0.2"
+    `maven-publish`
 }
 
 group = "com.uplineservers"
-version = "1.3"
+version = "1.4"
 
 repositories {
     mavenCentral()
@@ -16,16 +18,11 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.2.build.+")
-
-    // Bundled into the shadow jar so the plugin is self-contained.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
 
 tasks {
     runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("26.2")
     }
 }
@@ -33,6 +30,11 @@ tasks {
 val targetJavaVersion = 25
 kotlin {
     jvmToolchain(targetJavaVersion)
+}
+
+java {
+    // Ship sources so consumers get navigation and docs in their IDE.
+    withSourcesJar()
 }
 
 tasks.build {
@@ -45,5 +47,51 @@ tasks.processResources {
     filteringCharset = "UTF-8"
     filesMatching("plugin.yml") {
         expand(props)
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "uplineguiapi"
+
+            // The plain API jar: consumers add it as compileOnly and run the
+            // shaded plugin jar on the server, so the Kotlin stdlib is not shaded in here.
+            from(components["java"])
+
+            pom {
+                name = "UplineGuiApi"
+                description = "Advanced custom GUI API for Minecraft plugins"
+                url = "https://github.com/UplineServers/UplineGuiApi"
+
+                developers {
+                    developer {
+                        id = "emanuelscura"
+                        name = "Emanuel Scura"
+                        url = "https://emanuelscura.me"
+                    }
+                }
+
+                scm {
+                    url = "https://github.com/UplineServers/UplineGuiApi"
+                    connection = "scm:git:https://github.com/UplineServers/UplineGuiApi.git"
+                    developerConnection = "scm:git:git@github.com:UplineServers/UplineGuiApi.git"
+                }
+            }
+        }
+    }
+
+    repositories {
+        // Publishes to GitHub Packages when credentials are present:
+        //   GITHUB_ACTOR / GITHUB_TOKEN  (set automatically inside GitHub Actions)
+        // Locally, `./gradlew publishToMavenLocal` needs no credentials at all.
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/UplineServers/CustomGUI")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR") ?: providers.gradleProperty("gpr.user").orNull
+                password = System.getenv("GITHUB_TOKEN") ?: providers.gradleProperty("gpr.key").orNull
+            }
+        }
     }
 }

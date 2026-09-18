@@ -1,0 +1,8 @@
+# JitPack builds this repo on demand when someone requests a tag.
+# Gradle itself runs on JDK 21 and then downloads the Java 25 toolchain
+# automatically (see the foojay-resolver plugin in settings.gradle.kts).
+jdk:
+  - openjdk21
+
+install:
+  - ./gradlew publishToMavenLocal
